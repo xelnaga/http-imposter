@@ -4,12 +4,17 @@ sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
 repositories {
+
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     
-    groovy 'org.codehaus.groovy:groovy:1.8.5'
+    groovy 'org.codehaus.groovy:groovy-all:1.8.5'
 
     compile 'javax.servlet:servlet-api:2.5'
+
+    testCompile 'org.spockframework:spock-core:0.5-groovy-1.8',
+                'org.gmock:gmock:0.8.2'
 }

@@ -3,7 +3,7 @@ package net.xelnaga.httpimposter
 import groovy.transform.EqualsAndHashCode
 
 @EqualsAndHashCode
-class ResponseDescription {
+class ImposterRequest {
 
     String body
 }
