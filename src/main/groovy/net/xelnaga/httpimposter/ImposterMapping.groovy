@@ -12,11 +12,11 @@ class ImposterMapping {
     }
     
     void put(ImposterRequest imposterRequest, ImposterResponse imposterResponse) {
-        map.put(imposterRequest, imposterResponse)
+        map[imposterRequest] = imposterResponse
     }
 
     ImposterResponse get(ImposterRequest imposterRequest) {
-        return map.get(imposterRequest)
+        return map[imposterRequest]
     }
 
     void clear() {
