@@ -1,8 +1,10 @@
 package net.xelnaga.httpimposter.model
 
-import groovy.transform.EqualsAndHashCode
+import groovy.transform.TupleConstructor
+import groovy.transform.ToString
 
-@EqualsAndHashCode
+@TupleConstructor
+@ToString
 class ImposterResponse {
 
     int status
