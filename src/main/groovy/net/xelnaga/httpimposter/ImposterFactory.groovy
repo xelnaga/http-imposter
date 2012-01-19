@@ -6,8 +6,8 @@ class ImposterFactory {
 
     ImposterRequest makeRequest(HttpServletRequest httpRequest) {
         
-        String body = httpRequest.inputStream.text
+        String requestBody = httpRequest.inputStream.text
         
-        return new ImposterRequest(body:  body)
+        return new ImposterRequest(requestBody: requestBody)
     }
 }

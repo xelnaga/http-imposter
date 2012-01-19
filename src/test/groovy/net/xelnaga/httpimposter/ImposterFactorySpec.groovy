@@ -18,7 +18,7 @@ class ImposterFactorySpec extends Specification {
         given:
             InputStream inputStream = new ByteArrayInputStream('qwerty'.bytes)
             HttpServletRequest mockHttpRequest = mock(HttpServletRequest)
-            mockHttpRequest.getInputStream().returns(inputStream)
+            mockHttpRequest.inputStream.returns(inputStream)
         
         when:
             ImposterRequest request = null
@@ -27,6 +27,6 @@ class ImposterFactorySpec extends Specification {
             }
         
         then:
-            request.body == 'qwerty'
+            request.requestBody == 'qwerty'
     }
 }

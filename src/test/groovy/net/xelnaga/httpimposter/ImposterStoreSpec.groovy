@@ -13,8 +13,8 @@ class ImposterStoreSpec extends Specification {
     def 'get with stored response'() {
 
         given:
-            ImposterRequest request = new ImposterRequest(body: 'hello')
-            ImposterResponse response = new ImposterResponse(body: 'world')
+            ImposterRequest request = new ImposterRequest(requestBody: 'hello')
+            ImposterResponse response = new ImposterResponse(responseBody: 'world')
 
         when:
             store.put(request, response)
@@ -26,7 +26,7 @@ class ImposterStoreSpec extends Specification {
     def 'get without stored response'() {
     
         given:
-            ImposterRequest request = new ImposterRequest(body: 'hello')
+            ImposterRequest request = new ImposterRequest(requestBody: 'hello')
         
         expect:
             store.get(request) == null
@@ -35,8 +35,8 @@ class ImposterStoreSpec extends Specification {
     def 'clear'() {
 
         given:
-            ImposterRequest request = new ImposterRequest(body: 'hello')
-            ImposterResponse response = new ImposterResponse(body: 'world')
+            ImposterRequest request = new ImposterRequest(requestBody: 'hello')
+            ImposterResponse response = new ImposterResponse(responseBody: 'world')
             store.put(request, response)
 
         when:
