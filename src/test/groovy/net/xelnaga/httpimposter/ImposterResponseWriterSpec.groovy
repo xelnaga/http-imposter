@@ -16,9 +16,9 @@ class ImposterResponseWriterSpec extends Specification {
         
         given:
             ImposterResponse imposterResponse = new ImposterResponse(
-                    statusCode: 234,
-                    contentType: 'text/exciting',
-                    responseBody: 'qwertyuiop'
+                    status: 234,
+                    mime: 'text/exciting',
+                    body: 'qwertyuiop'
             )
 
             MockHttpServletResponse httpResponse = new MockHttpServletResponse()

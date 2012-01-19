@@ -7,9 +7,9 @@ class ImposterResponseWriter {
 
     HttpServletResponse write(ImposterResponse imposterResponse, HttpServletResponse httpResponse) {
 
-        httpResponse.status = imposterResponse.statusCode
-        httpResponse.contentType = imposterResponse.contentType
-        httpResponse.outputStream << imposterResponse.responseBody
+        httpResponse.status = imposterResponse.status
+        httpResponse.contentType = imposterResponse.mime
+        httpResponse.outputStream << imposterResponse.body
 
         return httpResponse
     }

@@ -5,6 +5,8 @@ import groovy.transform.EqualsAndHashCode
 @EqualsAndHashCode
 class ImposterRequest {
 
-    String contentType
-    String requestBody
+    String uri
+    String method
+    String mime
+    String body
 }

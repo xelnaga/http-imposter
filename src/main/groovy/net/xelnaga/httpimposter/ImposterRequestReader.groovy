@@ -8,7 +8,9 @@ class ImposterRequestReader {
     ImposterRequest read(HttpServletRequest httpRequest) {
 
         return new ImposterRequest(
-                contentType: httpRequest.contentType,
-                requestBody: httpRequest.inputStream.text)
+                uri:    httpRequest.requestURI,
+                method: httpRequest.method,
+                mime:   httpRequest.contentType,
+                body:   httpRequest.inputStream.text)
     }
 }

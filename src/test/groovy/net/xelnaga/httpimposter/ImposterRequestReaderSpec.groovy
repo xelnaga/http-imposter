@@ -15,15 +15,22 @@ class ImposterRequestReaderSpec extends Specification {
     def 'read'() {
         
         given:
-            MockHttpServletRequest httpRequest = new MockHttpServletRequest()
-            httpRequest.contentType = 'text/banana'
-            httpRequest.content = 'qwerty'.bytes
+            MockHttpServletRequest httpRequest = new MockHttpServletRequest(
+                    requestURI: '/fruity/pineapple',
+                    method: 'mango',
+                    contentType: 'text/banana',
+                    content: 'qwerty'.bytes
+             )
 
         when:
             ImposterRequest imposterRequest = reader.read(httpRequest)
 
         then:
-            imposterRequest.contentType == 'text/banana'
-            imposterRequest.requestBody == 'qwerty'
+            imposterRequest == new ImposterRequest(
+                    uri: '/fruity/pineapple',
+                    method: 'mango',
+                    mime: 'text/banana',
+                    body: 'qwerty'
+            )
     }
 }

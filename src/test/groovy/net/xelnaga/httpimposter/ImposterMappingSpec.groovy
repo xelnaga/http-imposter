@@ -15,8 +15,8 @@ class ImposterMappingSpec extends Specification {
     def 'get when mapping exists'() {
 
         given:
-            ImposterRequest request = new ImposterRequest(requestBody: 'hello')
-            ImposterResponse response = new ImposterResponse(responseBody: 'world')
+            ImposterRequest request = new ImposterRequest(body: 'hello')
+            ImposterResponse response = new ImposterResponse(body: 'world')
 
         when:
             mapping.put(request, response)
@@ -28,7 +28,7 @@ class ImposterMappingSpec extends Specification {
     def 'get when mapping does not exist'() {
     
         given:
-            ImposterRequest request = new ImposterRequest(requestBody: 'hello')
+            ImposterRequest request = new ImposterRequest(body: 'hello')
         
         expect:
             mapping.get(request) == null
@@ -37,8 +37,8 @@ class ImposterMappingSpec extends Specification {
     def 'clear'() {
 
         given:
-            ImposterRequest request = new ImposterRequest(requestBody: 'hello')
-            ImposterResponse response = new ImposterResponse(responseBody: 'world')
+            ImposterRequest request = new ImposterRequest(body: 'hello')
+            ImposterResponse response = new ImposterResponse(body: 'world')
             mapping.put(request, response)
 
         when:
