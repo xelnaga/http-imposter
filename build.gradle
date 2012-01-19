@@ -1,5 +1,9 @@
 apply plugin: 'groovy'
 
+group = 'net.xelnaga'
+artifactId = 'http-imposter'
+version = "1.0.${new Date().format('yyMMdd.HHmm')}"
+
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
@@ -16,5 +20,7 @@ dependencies {
     compile 'javax.servlet:servlet-api:2.5'
 
     testCompile 'org.spockframework:spock-core:0.5-groovy-1.8',
-                'org.gmock:gmock:0.8.2'
-}
+                'org.gmock:gmock:0.8.2',
+                'org.springframework:spring-core:3.1.0.RELEASE',
+                'org.springframework:spring-test:3.1.0.RELEASE'
+    }

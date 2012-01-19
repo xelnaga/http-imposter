@@ -1,4 +1,4 @@
-package net.xelnaga.httpimposter
+package net.xelnaga.httpimposter.model
 
 import groovy.transform.EqualsAndHashCode
 

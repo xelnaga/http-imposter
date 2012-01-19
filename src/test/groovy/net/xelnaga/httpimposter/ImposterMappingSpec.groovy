@@ -1,35 +1,37 @@
 package net.xelnaga.httpimposter
 
 import spock.lang.Specification
+import net.xelnaga.httpimposter.model.ImposterRequest
+import net.xelnaga.httpimposter.model.ImposterResponse
 
-class ImposterStoreSpec extends Specification {
+class ImposterMappingSpec extends Specification {
 
-    private ImposterStore store
+    private ImposterMapping mapping
     
     void setup() {
-        store = new ImposterStore()
+        mapping = new ImposterMapping()
     }
 
-    def 'get with stored response'() {
+    def 'get when mapping exists'() {
 
         given:
             ImposterRequest request = new ImposterRequest(requestBody: 'hello')
             ImposterResponse response = new ImposterResponse(responseBody: 'world')
 
         when:
-            store.put(request, response)
+            mapping.put(request, response)
 
         then:
-            store.get(request) == response
+            mapping.get(request) == response
     }
 
-    def 'get without stored response'() {
+    def 'get when mapping does not exist'() {
     
         given:
             ImposterRequest request = new ImposterRequest(requestBody: 'hello')
         
         expect:
-            store.get(request) == null
+            mapping.get(request) == null
     }
 
     def 'clear'() {
@@ -37,12 +39,12 @@ class ImposterStoreSpec extends Specification {
         given:
             ImposterRequest request = new ImposterRequest(requestBody: 'hello')
             ImposterResponse response = new ImposterResponse(responseBody: 'world')
-            store.put(request, response)
+            mapping.put(request, response)
 
         when:
-            store.clear()
+            mapping.clear()
 
         then:
-            store.get(request) == null
+            mapping.get(request) == null
     }
 }
