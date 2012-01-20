@@ -62,12 +62,12 @@ class Imposter {
 
     private void logMatch(ImposterRequest imposterRequest, ImposterResponse imposterResponse, boolean matched) {
 
-        println matched ? '>> [Http Imposter]: Matched Request' : '>> [Http Imposter]: Unmatched Request'
+        println matched ? '\n>> [Http Imposter]: Matched Request' : '\n>> [Http Imposter]: Unmatched Request'
         println '>> ==================================='
         print imposterRequest.toString()
         println '>>'
 
-        println '>> [Http Imposter]: Sending Response'
+        println '\n>> [Http Imposter]: Sending Response'
         println '>> ==================================='
         print imposterResponse.toString()
         println '>>'
