@@ -2,7 +2,6 @@ package net.xelnaga.httpimposter
 
 import javax.servlet.http.HttpServletRequest
 import net.xelnaga.httpimposter.model.ImposterRequest
-import groovy.json.JsonSlurper
 
 class ImposterRequestReader {
 
@@ -14,7 +13,13 @@ class ImposterRequestReader {
                 body:   httpRequest.inputStream.text)
         
         httpRequest.headerNames.each { String name ->
-            imposterRequest.headers[name] = httpRequest.getHeader(name)
+            
+            String value = httpRequest.getHeader(name)
+
+            name = name.capitalize()
+            if (name != 'Host') {
+                imposterRequest.headers[name] = value
+            }
         }
         
         return imposterRequest

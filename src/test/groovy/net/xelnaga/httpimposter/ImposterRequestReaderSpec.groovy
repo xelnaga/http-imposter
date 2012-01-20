@@ -23,6 +23,7 @@ class ImposterRequestReaderSpec extends Specification {
                     content: 'qwerty'.bytes
             )
             httpRequest.addHeader('Pineapple', 'Passionfruit')
+            httpRequest.addHeader('Host', 'somehost')
 
         when:
             ImposterRequest imposterRequest = reader.read(httpRequest)
