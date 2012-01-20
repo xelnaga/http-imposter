@@ -4,7 +4,9 @@ import net.xelnaga.httpimposter.model.ImposterRequest
 import net.xelnaga.httpimposter.model.ImposterResponse
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import groovy.util.logging.Log
 
+@Log
 class Imposter {
 
     static final NO_MATCH = new ImposterResponse(
@@ -30,10 +32,10 @@ class Imposter {
         ImposterResponse imposterResponse = map.get(imposterRequest)
 
         if (imposterResponse) {
-            logMatch(imposterRequest, imposterResponse, true)
+            logInteraction(imposterRequest, imposterResponse, true)
             responseWriter.write(imposterResponse, httpResponse)
         } else {
-            logMatch(imposterRequest, NO_MATCH, false)
+            logInteraction(imposterRequest, NO_MATCH, false)
             responseWriter.write(NO_MATCH, httpResponse)
         }
     }
@@ -60,16 +62,16 @@ class Imposter {
         map.clear()
     }
 
-    private void logMatch(ImposterRequest imposterRequest, ImposterResponse imposterResponse, boolean matched) {
+    private void logInteraction(ImposterRequest imposterRequest, ImposterResponse imposterResponse, boolean matched) {
 
-        println matched ? '\n>> [Http Imposter]: Matched Request' : '\n>> [Http Imposter]: Unmatched Request'
-        println '>> ==================================='
-        print imposterRequest.toString()
-        println '>>'
+        log.info matched ? '\n>> [Http Imposter]: Matched Request' : '\n>> [Http Imposter]: Unmatched Request'
+        log.info '>> ==================================='
+        log.info imposterRequest.toString()
+        log.info '>>'
 
-        println '\n>> [Http Imposter]: Sending Response'
-        println '>> ==================================='
-        print imposterResponse.toString()
-        println '>>'
+        log.info '\n>> [Http Imposter]: Sending Response'
+        log.info '>> ==================================='
+        log.info imposterResponse.toString()
+        log.info '>>'
     }
 }
