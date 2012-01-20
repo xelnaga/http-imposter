@@ -3,6 +3,7 @@ package net.xelnaga.httpimposter
 import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Specification
 import net.xelnaga.httpimposter.model.ImposterRequest
+import groovy.json.JsonOutput
 
 class ImposterRequestReaderSpec extends Specification {
     
@@ -12,7 +13,7 @@ class ImposterRequestReaderSpec extends Specification {
         reader = new ImposterRequestReader()
     }
     
-    def 'read'() {
+    def 'read from http request'() {
         
         given:
             MockHttpServletRequest httpRequest = new MockHttpServletRequest(
@@ -20,7 +21,8 @@ class ImposterRequestReaderSpec extends Specification {
                     method: 'mango',
                     contentType: 'text/banana',
                     content: 'qwerty'.bytes
-             )
+            )
+            httpRequest.addHeader('Pineapple', 'Passionfruit')
 
         when:
             ImposterRequest imposterRequest = reader.read(httpRequest)
@@ -29,7 +31,10 @@ class ImposterRequestReaderSpec extends Specification {
             imposterRequest == new ImposterRequest(
                     uri: '/fruity/pineapple',
                     method: 'mango',
-                    mime: 'text/banana',
+                    headers: [
+                            'Content-Type': 'text/banana',
+                            'Pineapple': 'Passionfruit'
+                    ],
                     body: 'qwerty'
             )
     }

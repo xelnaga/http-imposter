@@ -24,4 +24,14 @@ dependencies {
                 'org.gmock:gmock:0.8.2',
                 'org.springframework:spring-core:3.1.0.RELEASE',
                 'org.springframework:spring-test:3.1.0.RELEASE'
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        name = 'httpDeployer'
+        repository(url: System.properties['artifactoryStableUrl']) {
+            authentication(userName: System.properties['artifactoryUserName'], password: System.properties['artifactoryPassword'])
+        }
+        pom.artifactId = artifactId
     }
+}

@@ -1,14 +1,18 @@
 package net.xelnaga.httpimposter.model
 
 import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
+import net.xelnaga.httpimposter.ImposterPrinter
 
 @EqualsAndHashCode
-@ToString
 class ImposterRequest {
 
     String uri
     String method
-    String mime
+    Map<String, String> headers = [:]
     String body
+
+    @Override
+    String toString() {
+        return new ImposterPrinter().print(this)
+    }
 }

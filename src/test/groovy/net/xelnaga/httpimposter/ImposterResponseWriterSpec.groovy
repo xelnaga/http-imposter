@@ -17,7 +17,10 @@ class ImposterResponseWriterSpec extends Specification {
         given:
             ImposterResponse imposterResponse = new ImposterResponse(
                     status: 234,
-                    mime: 'text/exciting',
+                    headers: [
+                        'Content-Type': 'text/exciting',
+                        'Lemon': 'Lime'
+                    ],
                     body: 'qwertyuiop'
             )
 
@@ -29,6 +32,7 @@ class ImposterResponseWriterSpec extends Specification {
         then:
             httpResponse.status == 234
             httpResponse.contentType == 'text/exciting'
+            httpResponse.getHeader('Lemon') == 'Lime'
             httpResponse.contentAsString == 'qwertyuiop'
     }
 }
