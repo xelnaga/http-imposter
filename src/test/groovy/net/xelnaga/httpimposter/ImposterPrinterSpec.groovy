@@ -1,8 +1,9 @@
 package net.xelnaga.httpimposter
 
-import spock.lang.Specification
+import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ImposterRequest
 import net.xelnaga.httpimposter.model.ImposterResponse
+import spock.lang.Specification
 
 class ImposterPrinterSpec extends Specification {
     
@@ -19,16 +20,16 @@ class ImposterPrinterSpec extends Specification {
                     uri: '/some/uri',
                     method: 'POST',
                     headers: [
-                            'Content-Type': 'text/plain',
-                            'Content-Length': '69'
+                            new HttpHeader('Content-Type', 'text/plain'),
+                            new HttpHeader('Content-Length', '69')
                     ],
                     body: 'Hello World')
         
         expect:
             printer.print(imposterRequest) == '''POST /some/uri
 
-Content-Type: text/plain
 Content-Length: 69
+Content-Type: text/plain
 
 Hello World
 '''
@@ -40,16 +41,16 @@ Hello World
             ImposterResponse imposterResponse = new ImposterResponse(
                     status: 456,
                     headers: [
-                            'Content-Type': 'text/plain',
-                            'Content-Length': '69'
+                            new HttpHeader('Content-Type', 'text/plain'),
+                            new HttpHeader('Content-Length', '69')
                     ],
                     body: 'Hello World')        
 
         expect:
             printer.print(imposterResponse) == '''HTTP/1.1 456
 
-Content-Type: text/plain
 Content-Length: 69
+Content-Type: text/plain
 
 Hello World
 '''

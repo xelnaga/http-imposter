@@ -1,7 +1,8 @@
 package net.xelnaga.httpimposter
 
-import net.xelnaga.httpimposter.model.ImposterRequest
 import net.xelnaga.httpimposter.model.ImposterResponse
+import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.ImposterRequest
 
 class ImposterPrinter {
 
@@ -23,10 +24,10 @@ class ImposterPrinter {
         return output
     }
     
-    private String printHeaders(Map<String, String> headers) {
+    private String printHeaders(Set<HttpHeader> headers) {
 
-        return headers.collect { String name, String value ->
-            "${name}: ${value}"
+        return headers.collect { HttpHeader httpHeader ->
+            httpHeader.toString()
         }.join('\n')
     }
 }

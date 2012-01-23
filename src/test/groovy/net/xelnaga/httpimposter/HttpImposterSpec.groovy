@@ -1,7 +1,7 @@
 package net.xelnaga.httpimposter
 
 import spock.lang.Specification
-import net.xelnaga.httpimposter.model.ImposterRequest
+
 import net.xelnaga.httpimposter.model.ImposterResponse
 import javax.servlet.http.HttpServletRequest
 import org.springframework.mock.web.MockHttpServletRequest
@@ -9,13 +9,19 @@ import org.gmock.WithGMock
 import org.springframework.mock.web.MockHttpServletResponse
 import javax.servlet.http.HttpServletResponse
 
-@WithGMock
-class ImposterSpec extends Specification {
+import net.xelnaga.httpimposter.model.ImposterRequest
+import net.xelnaga.httpimposter.filter.HttpHeaderFilter
+import net.xelnaga.httpimposter.filter.HeaderNameExclusionFilter
+import net.xelnaga.httpimposter.factory.ImposterRequestFactory
+import net.xelnaga.httpimposter.factory.ImposterResponseFactory
 
-    private Imposter imposter
+@WithGMock
+class HttpImposterSpec extends Specification {
+
+    private HttpImposter httpImposter
     
     void setup() {
-        imposter = new Imposter()
+        httpImposter = new HttpImposter()
     }
 
     def 'get when mapping exists'() {
@@ -25,10 +31,10 @@ class ImposterSpec extends Specification {
             ImposterResponse response = new ImposterResponse(body: 'world')
 
         when:
-            imposter.put(request, response)
+            httpImposter.put(request, response)
 
         then:
-            imposter.get(request) == response
+            httpImposter.get(request) == response
     }
 
     def 'get when mapping does not exist'() {
@@ -37,11 +43,9 @@ class ImposterSpec extends Specification {
             ImposterRequest request = new ImposterRequest(body: 'hello')
         
         expect:
-            imposter.get(request) == null
+            httpImposter.get(request) == null
     }
-
-    
-    
+   
     def 'configure'() {
         
         given:
@@ -51,18 +55,19 @@ class ImposterSpec extends Specification {
         
             ImposterRequest imposterRequest = new ImposterRequest(body: 'apple')
             ImposterResponse imposterResponse = new ImposterResponse(body: 'pear')
-        
-            ImposterJsonParser mockImposterJsonParser = mock(ImposterJsonParser, constructor())
-            mockImposterJsonParser.parseRequest('qwerty').returns(imposterRequest)
-            mockImposterJsonParser.parseResponse('asdfgh').returns(imposterResponse)
+            
+            ImposterRequestFactory mockImposterRequestFactory = mock(ImposterRequestFactory, constructor())
+            ImposterResponseFactory mockImposterResponseFactory = mock(ImposterResponseFactory, constructor())
+            mockImposterRequestFactory.fromJson('qwerty').returns(imposterRequest)
+            mockImposterResponseFactory.fromJson('asdfgh').returns(imposterResponse)
         
         when:
             play {
-                imposter.configure(httpRequest)
+                httpImposter.configure(httpRequest)
             }
 
         then:
-            imposter.get(imposterRequest) == imposterResponse
+            httpImposter.get(imposterRequest) == imposterResponse
     }
 
     def 'respond when match'() {
@@ -73,14 +78,14 @@ class ImposterSpec extends Specification {
 
             HttpServletResponse httpResponse = new MockHttpServletResponse()
 
-            ImposterRequest imposterRequest = new ImposterRequestReader().read(httpRequest)
+            ImposterRequest imposterRequest = new ImposterRequestFactory().fromHttpRequest(httpRequest)
             ImposterResponse imposterResponse = new ImposterResponse(status: 234, body: 'pear')
         
-            imposter.put(imposterRequest, imposterResponse)
+            httpImposter.put(imposterRequest, imposterResponse)
         
         when:
             play {
-                imposter.respond(httpRequest, httpResponse)    
+                httpImposter.respond(httpRequest, httpResponse)    
             }
         
         then:
@@ -98,11 +103,11 @@ class ImposterSpec extends Specification {
 
         when:
             play {
-                imposter.respond(httpRequest, httpResponse)
+                httpImposter.respond(httpRequest, httpResponse)
             }
 
         then:
-            httpResponse.status == 500
+            httpResponse.status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR
             httpResponse.contentType == 'text/plain'
             httpResponse.contentAsString == 'No match found for http request'
     }
@@ -110,14 +115,26 @@ class ImposterSpec extends Specification {
     def 'reset'() {
 
         given:
-        ImposterRequest request = new ImposterRequest(body: 'hello')
-        ImposterResponse response = new ImposterResponse(body: 'world')
-        imposter.put(request, response)
+            ImposterRequest request = new ImposterRequest(body: 'hello')
+            ImposterResponse response = new ImposterResponse(body: 'world')
+            httpImposter.put(request, response)
 
         when:
-        imposter.reset()
+            httpImposter.reset()
 
         then:
-        imposter.get(request) == null
+            httpImposter.get(request) == null
+    }
+    
+    def 'set filter'() {
+        
+        given:
+            HttpHeaderFilter filter = new HeaderNameExclusionFilter([ 'qwerty' ])
+        
+        when:
+            httpImposter.setFilter(filter)
+
+        then:
+            httpImposter.requestReader.filter.is(filter)
     }
 }

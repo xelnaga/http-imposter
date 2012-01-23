@@ -7,7 +7,7 @@ import net.xelnaga.httpimposter.ImposterPrinter
 class ImposterResponse {
 
     int status
-    Map<String, String> headers = [:]
+    Set<HttpHeader> headers = [] as TreeSet
     String body
     
     @Override

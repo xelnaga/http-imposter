@@ -23,7 +23,8 @@ dependencies {
     testCompile 'org.spockframework:spock-core:0.5-groovy-1.8',
                 'org.gmock:gmock:0.8.2',
                 'org.springframework:spring-core:3.1.0.RELEASE',
-                'org.springframework:spring-test:3.1.0.RELEASE'
+                'org.springframework:spring-test:3.1.0.RELEASE',
+                'junit:junit:4.10'
 }
 
 uploadArchives {

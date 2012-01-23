@@ -2,6 +2,7 @@ package net.xelnaga.httpimposter
 
 import javax.servlet.http.HttpServletResponse
 import net.xelnaga.httpimposter.model.ImposterResponse
+import net.xelnaga.httpimposter.model.HttpHeader
 
 class ImposterResponseWriter {
 
@@ -9,8 +10,8 @@ class ImposterResponseWriter {
 
         httpResponse.status = imposterResponse.status
 
-        imposterResponse.headers.each { String name, String value ->
-            httpResponse.addHeader(name, value)
+        imposterResponse.headers.each { HttpHeader httpHeader ->
+            httpResponse.addHeader(httpHeader.name, httpHeader.value)
         }
 
         httpResponse.outputStream << imposterResponse.body

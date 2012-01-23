@@ -1,34 +1,42 @@
 package net.xelnaga.httpimposter
 
-import net.xelnaga.httpimposter.model.ImposterRequest
-import net.xelnaga.httpimposter.model.ImposterResponse
+import groovy.util.logging.Log
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import groovy.util.logging.Log
+import net.xelnaga.httpimposter.filter.HttpHeaderFilter
+import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.ImposterRequest
+import net.xelnaga.httpimposter.model.ImposterResponse
+import net.xelnaga.httpimposter.factory.ImposterRequestFactory
+import net.xelnaga.httpimposter.factory.ImposterResponseFactory
 
 @Log
-class Imposter {
+class HttpImposter {
 
     static final NO_MATCH = new ImposterResponse(
-            status: 500,
+            status: HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
             headers: [
-                    'Content-Type': 'text/plain'
+                    new HttpHeader('Content-Type', 'text/plain')
             ],
             body: 'No match found for http request'
     )
-    
-    ImposterRequestReader requestReader = new ImposterRequestReader()
+
+    ImposterRequestFactory requestReader = new ImposterRequestFactory()
     ImposterResponseWriter responseWriter = new ImposterResponseWriter()
 
     private Map<ImposterRequest, ImposterResponse> map
- 
-    Imposter() {
+
+    HttpImposter() {
         map = [:]
+    }
+
+    void setFilter(HttpHeaderFilter filter) {
+        requestReader = new ImposterRequestFactory(filter: filter)
     }
 
     void respond(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
-        ImposterRequest imposterRequest = requestReader.read(httpRequest)
+        ImposterRequest imposterRequest = requestReader.fromHttpRequest(httpRequest)
         ImposterResponse imposterResponse = map.get(imposterRequest)
 
         if (imposterResponse) {
@@ -42,10 +50,11 @@ class Imposter {
 
     void configure(HttpServletRequest httpRequest) {
 
-        ImposterJsonParser parser = new ImposterJsonParser()
+        ImposterRequestFactory requestFactory = new ImposterRequestFactory()
+        ImposterResponseFactory responseFactory = new ImposterResponseFactory()
 
-        ImposterRequest imposterRequest = parser.parseRequest(httpRequest.getParameter('imposterRequest'))
-        ImposterResponse imposterResponse = parser.parseResponse(httpRequest.getParameter('imposterResponse'))
+        ImposterRequest imposterRequest = requestFactory.fromJson(httpRequest.getParameter('imposterRequest'))
+        ImposterResponse imposterResponse = responseFactory.fromJson(httpRequest.getParameter('imposterResponse'))
 
         map.put(imposterRequest, imposterResponse)
     }

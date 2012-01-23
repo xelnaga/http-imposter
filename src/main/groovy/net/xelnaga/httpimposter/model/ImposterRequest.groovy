@@ -8,7 +8,7 @@ class ImposterRequest {
 
     String uri
     String method
-    Map<String, String> headers = [:]
+    Set<HttpHeader> headers = [] as TreeSet
     String body
 
     @Override

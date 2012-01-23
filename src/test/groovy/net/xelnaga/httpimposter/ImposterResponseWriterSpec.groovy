@@ -3,6 +3,7 @@ package net.xelnaga.httpimposter
 import org.springframework.mock.web.MockHttpServletResponse
 import spock.lang.Specification
 import net.xelnaga.httpimposter.model.ImposterResponse
+import net.xelnaga.httpimposter.model.HttpHeader
 
 class ImposterResponseWriterSpec extends Specification {
 
@@ -18,8 +19,8 @@ class ImposterResponseWriterSpec extends Specification {
             ImposterResponse imposterResponse = new ImposterResponse(
                     status: 234,
                     headers: [
-                        'Content-Type': 'text/exciting',
-                        'Lemon': 'Lime'
+                        new HttpHeader('Content-Type', 'text/exciting'),
+                        new HttpHeader('Lemon', 'Lime')
                     ],
                     body: 'qwertyuiop'
             )
