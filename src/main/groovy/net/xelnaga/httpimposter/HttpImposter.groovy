@@ -8,12 +8,11 @@ import net.xelnaga.httpimposter.model.ImposterRequest
 import net.xelnaga.httpimposter.model.ImposterResponse
 import net.xelnaga.httpimposter.factory.ImposterRequestFactory
 import net.xelnaga.httpimposter.factory.ImposterResponseFactory
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.log4j.Logger
 
 class HttpImposter {
 
-    Logger log = LoggerFactory.getLogger(HttpImposter)
+    Logger log = Logger.getLogger(HttpImposter)
 
     static final NO_MATCH = new ImposterResponse(
             status: HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
