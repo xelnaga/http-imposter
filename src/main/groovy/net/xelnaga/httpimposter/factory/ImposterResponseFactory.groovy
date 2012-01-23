@@ -3,6 +3,7 @@ package net.xelnaga.httpimposter.factory
 import groovy.json.JsonSlurper
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ImposterResponse
+import org.apache.commons.codec.binary.Base64
 
 class ImposterResponseFactory {
 
@@ -12,7 +13,7 @@ class ImposterResponseFactory {
         
         ImposterResponse imposterResponse = new ImposterResponse(
                 status: result.status,
-                body: result.body
+                body: new String(Base64.decodeBase64((String) result.body))
         )
 
         result.headers.each { Map header ->

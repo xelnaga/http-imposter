@@ -6,6 +6,7 @@ import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.filter.PassThroughFilter
 import groovy.json.JsonSlurper
+import org.apache.commons.codec.binary.Base64
 
 class ImposterRequestFactory {
 
@@ -35,7 +36,7 @@ class ImposterRequestFactory {
         ImposterRequest imposterRequest = new ImposterRequest(
                 uri: result.uri,
                 method: result.method,
-                body: result.body
+                body: new String(Base64.decodeBase64((String) result.body))
         )
 
         result.headers.each { Map header ->

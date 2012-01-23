@@ -6,6 +6,7 @@ import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Specification
 import org.gmock.WithGMock
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
+import org.apache.commons.codec.binary.Base64
 
 @WithGMock
 class ImposterRequestFactorySpec extends Specification {
@@ -74,7 +75,7 @@ class ImposterRequestFactorySpec extends Specification {
         }
     ],
     "uri": "/fruity/pineapple",
-    "body": "qwerty",
+    "body": "Ym9keXRlc3Q=",
     "method": "mango"
 }'''
         and:
@@ -96,6 +97,6 @@ class ImposterRequestFactorySpec extends Specification {
                             new HttpHeader('Content-Type', 'text/banana'),
                             new HttpHeader('Pineapple', 'Passionfruit')
                     ],
-                    body: 'qwerty')
+                    body: 'bodytest')
     }
 }

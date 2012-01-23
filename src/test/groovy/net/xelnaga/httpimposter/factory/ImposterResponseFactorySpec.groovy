@@ -4,6 +4,7 @@ import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ImposterRequest
 import net.xelnaga.httpimposter.model.ImposterResponse
 import spock.lang.Specification
+import org.apache.commons.codec.binary.Base64
 
 class ImposterResponseFactorySpec extends Specification {
 
@@ -28,7 +29,7 @@ class ImposterResponseFactorySpec extends Specification {
         }
     ],
     "status": 234,
-    "body": "qwertyuiop"
+    "body": "Ym9keXRlc3Q2NA=="
 }'''
         
         expect:
@@ -38,7 +39,7 @@ class ImposterResponseFactorySpec extends Specification {
                             new HttpHeader('Content-Type', 'text/exciting'),
                             new HttpHeader('Lemon', 'Lime')
                     ],
-                    body: 'qwertyuiop'
+                    body: 'bodytest64'
             )
     }
 }
