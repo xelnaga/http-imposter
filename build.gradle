@@ -18,7 +18,8 @@ dependencies {
     
     groovy 'org.codehaus.groovy:groovy-all:1.8.5'
 
-    compile 'javax.servlet:servlet-api:2.5'
+    compile 'javax.servlet:servlet-api:2.5',
+            'org.slf4j:slf4j-simple:1.6.4'
 
     testCompile 'org.spockframework:spock-core:0.5-groovy-1.8',
                 'org.gmock:gmock:0.8.2',

@@ -1,6 +1,5 @@
 package net.xelnaga.httpimposter
 
-import groovy.util.logging.Log
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
@@ -9,9 +8,12 @@ import net.xelnaga.httpimposter.model.ImposterRequest
 import net.xelnaga.httpimposter.model.ImposterResponse
 import net.xelnaga.httpimposter.factory.ImposterRequestFactory
 import net.xelnaga.httpimposter.factory.ImposterResponseFactory
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-@Log
 class HttpImposter {
+
+    Logger log = LoggerFactory.getLogger(HttpImposter)
 
     static final NO_MATCH = new ImposterResponse(
             status: HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
