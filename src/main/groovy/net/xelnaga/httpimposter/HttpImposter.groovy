@@ -9,6 +9,7 @@ import net.xelnaga.httpimposter.model.ImposterResponse
 import net.xelnaga.httpimposter.factory.ImposterRequestFactory
 import net.xelnaga.httpimposter.factory.ImposterResponseFactory
 import org.apache.log4j.Logger
+import groovy.json.JsonSlurper
 
 class HttpImposter {
 
@@ -54,8 +55,11 @@ class HttpImposter {
         ImposterRequestFactory requestFactory = new ImposterRequestFactory()
         ImposterResponseFactory responseFactory = new ImposterResponseFactory()
 
-        ImposterRequest imposterRequest = requestFactory.fromJson(httpRequest.getParameter('imposterRequest'))
-        ImposterResponse imposterResponse = responseFactory.fromJson(httpRequest.getParameter('imposterResponse'))
+        JsonSlurper jsonSlurper = new JsonSlurper()
+        def json = jsonSlurper.parseText(httpRequest.inputStream.text)
+        
+        ImposterRequest imposterRequest = requestFactory.fromJson(json.request)
+        ImposterResponse imposterResponse = responseFactory.fromJson(json.response)
 
         map.put(imposterRequest, imposterResponse)
     }

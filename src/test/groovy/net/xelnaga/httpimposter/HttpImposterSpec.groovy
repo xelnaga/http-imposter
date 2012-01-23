@@ -14,6 +14,7 @@ import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.filter.HeaderNameExclusionFilter
 import net.xelnaga.httpimposter.factory.ImposterRequestFactory
 import net.xelnaga.httpimposter.factory.ImposterResponseFactory
+import groovy.json.JsonSlurper
 
 @WithGMock
 class HttpImposterSpec extends Specification {
@@ -50,15 +51,18 @@ class HttpImposterSpec extends Specification {
         
         given:
             HttpServletRequest httpRequest = new MockHttpServletRequest()
-            httpRequest.addParameter('imposterRequest', 'qwerty')
-            httpRequest.addParameter('imposterResponse', 'asdfgh')
+            httpRequest.content = '{ "some": "json" }'.bytes
+
+            JsonSlurper mockJsonSlurper = mock(JsonSlurper, constructor())
+            mockJsonSlurper.parseText('{ "some": "json" }').returns([ request: 'qwerty', response: 'asdfgh' ])
         
             ImposterRequest imposterRequest = new ImposterRequest(body: 'apple')
             ImposterResponse imposterResponse = new ImposterResponse(body: 'pear')
             
             ImposterRequestFactory mockImposterRequestFactory = mock(ImposterRequestFactory, constructor())
-            ImposterResponseFactory mockImposterResponseFactory = mock(ImposterResponseFactory, constructor())
             mockImposterRequestFactory.fromJson('qwerty').returns(imposterRequest)
+
+            ImposterResponseFactory mockImposterResponseFactory = mock(ImposterResponseFactory, constructor())
             mockImposterResponseFactory.fromJson('asdfgh').returns(imposterResponse)
         
         when:
