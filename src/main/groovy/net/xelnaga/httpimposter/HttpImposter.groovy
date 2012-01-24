@@ -24,7 +24,7 @@ class HttpImposter {
     )
 
     ImposterRequestFactory requestReader = new ImposterRequestFactory()
-    ImposterResponseWriter responseWriter = new ImposterResponseWriter()
+    ResponseWriter responseWriter = new ResponseWriter()
 
     private Map<ImposterRequest, ImposterResponse> map
 

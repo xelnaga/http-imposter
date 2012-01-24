@@ -1,7 +1,7 @@
 package net.xelnaga.httpimposter.model
 
 import groovy.transform.EqualsAndHashCode
-import net.xelnaga.httpimposter.ImposterPrinter
+import net.xelnaga.httpimposter.StringPrinter
 
 @EqualsAndHashCode
 class ImposterResponse {
@@ -12,6 +12,6 @@ class ImposterResponse {
     
     @Override
     String toString() {
-        return new ImposterPrinter().print(this)
+        return new StringPrinter().print(this)
     }
 }

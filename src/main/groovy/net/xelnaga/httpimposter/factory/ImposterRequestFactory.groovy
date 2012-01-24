@@ -5,7 +5,6 @@ import net.xelnaga.httpimposter.model.ImposterRequest
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.filter.PassThroughFilter
-import groovy.json.JsonSlurper
 import org.apache.commons.codec.binary.Base64
 
 class ImposterRequestFactory {

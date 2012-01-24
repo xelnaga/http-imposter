@@ -4,7 +4,7 @@ import net.xelnaga.httpimposter.model.ImposterResponse
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ImposterRequest
 
-class ImposterPrinter {
+class StringPrinter {
 
     String print(ImposterRequest imposterRequest) {
 

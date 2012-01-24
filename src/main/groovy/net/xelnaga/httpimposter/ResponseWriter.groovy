@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletResponse
 import net.xelnaga.httpimposter.model.ImposterResponse
 import net.xelnaga.httpimposter.model.HttpHeader
 
-class ImposterResponseWriter {
+class ResponseWriter {
 
     HttpServletResponse write(ImposterResponse imposterResponse, HttpServletResponse httpResponse) {
 

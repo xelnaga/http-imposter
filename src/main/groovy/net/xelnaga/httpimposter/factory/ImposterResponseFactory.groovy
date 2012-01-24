@@ -1,6 +1,5 @@
 package net.xelnaga.httpimposter.factory
 
-import groovy.json.JsonSlurper
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ImposterResponse
 import org.apache.commons.codec.binary.Base64

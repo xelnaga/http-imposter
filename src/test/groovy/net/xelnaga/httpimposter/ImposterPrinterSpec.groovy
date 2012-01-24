@@ -7,10 +7,10 @@ import spock.lang.Specification
 
 class ImposterPrinterSpec extends Specification {
     
-    private ImposterPrinter printer
+    private StringPrinter printer
     
     void setup() {
-        printer = new ImposterPrinter()    
+        printer = new StringPrinter()
     }
     
     def 'print imposter request'() {

@@ -7,10 +7,10 @@ import net.xelnaga.httpimposter.model.HttpHeader
 
 class ImposterResponseWriterSpec extends Specification {
 
-    private ImposterResponseWriter writer
+    private ResponseWriter writer
     
     void setup() {
-        writer = new ImposterResponseWriter()
+        writer = new ResponseWriter()
     }
     
     def 'write'() {
