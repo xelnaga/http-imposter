@@ -6,7 +6,6 @@ import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Specification
 import org.gmock.WithGMock
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
-import org.apache.commons.codec.binary.Base64
 
 @WithGMock
 class ImposterRequestFactorySpec extends Specification {
@@ -59,25 +58,17 @@ class ImposterRequestFactorySpec extends Specification {
     def 'from json'() {
 
         given:
-            String json = '''{
-    "headers": [
-        {
-            "name": "Content-Type",
-            "value": "text/banana"
-        },
-        {
-            "name": "Pineapple",
-            "value": "Passionfruit"
-        },
-        {
-            "name": "Durian",
-            "value": "Stinky"
-        }
-    ],
-    "uri": "/fruity/pineapple",
-    "body": "Ym9keXRlc3Q=",
-    "method": "mango"
-}'''
+            Map jsonMap = [
+                    headers: [
+                            [ name: 'Content-Type', value: 'text/banana'],
+                            [name: 'Pineapple', value: 'Passionfruit'],
+                            [name: 'Durian', value: 'Stinky']
+                    ],
+                    uri: '/fruity/pineapple',
+                    body: 'Ym9keXRlc3Q=',
+                    method: 'mango'
+            ]
+
         and:
             mockFilter.isMatchable(new HttpHeader('Content-Type', 'text/banana')).returns(true)
             mockFilter.isMatchable(new HttpHeader('Pineapple', 'Passionfruit')).returns(true)
@@ -86,7 +77,7 @@ class ImposterRequestFactorySpec extends Specification {
         when:
             ImposterRequest imposterRequest = null
             play {
-                imposterRequest = factory.fromJson(json)
+                imposterRequest = factory.fromJson(jsonMap)
             }
 
         then:

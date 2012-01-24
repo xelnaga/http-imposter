@@ -29,17 +29,15 @@ class ImposterRequestFactory {
         return imposterRequest
     }
 
-    ImposterRequest fromJson(String json) {
-
-        def result = new JsonSlurper().parseText(json)
+    ImposterRequest fromJson(Map json) {
 
         ImposterRequest imposterRequest = new ImposterRequest(
-                uri: result.uri,
-                method: result.method,
-                body: new String(Base64.decodeBase64((String) result.body))
+                uri: json.uri,
+                method: json.method,
+                body: new String(Base64.decodeBase64((String) json.body))
         )
 
-        result.headers.each { Map header ->
+        json.headers.each { Map header ->
             
             HttpHeader httpHeader = new HttpHeader(header.name, header.value)
             addMatchableHeader(imposterRequest, httpHeader)

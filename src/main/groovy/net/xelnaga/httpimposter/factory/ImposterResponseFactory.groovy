@@ -7,16 +7,14 @@ import org.apache.commons.codec.binary.Base64
 
 class ImposterResponseFactory {
 
-    ImposterResponse fromJson(String json) {
-        
-        def result = new JsonSlurper().parseText(json)
+    ImposterResponse fromJson(Map json) {
         
         ImposterResponse imposterResponse = new ImposterResponse(
-                status: result.status,
-                body: new String(Base64.decodeBase64((String) result.body))
+                status: json.status,
+                body: new String(Base64.decodeBase64((String) json.body))
         )
 
-        result.headers.each { Map header ->
+        json.headers.each { Map header ->
             imposterResponse.headers << new HttpHeader(header.name, header.value)
         }
 
