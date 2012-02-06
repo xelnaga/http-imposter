@@ -14,7 +14,7 @@ import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.filter.HeaderNameExclusionFilter
 import net.xelnaga.httpimposter.factory.ImposterRequestFactory
 import net.xelnaga.httpimposter.factory.ImposterResponseFactory
-import groovy.json.JsonSlurper
+import com.google.gson.Gson
 
 @WithGMock
 class HttpImposterSpec extends Specification {
@@ -53,8 +53,8 @@ class HttpImposterSpec extends Specification {
             HttpServletRequest httpRequest = new MockHttpServletRequest()
             httpRequest.content = '{ "some": "json" }'.bytes
 
-            JsonSlurper mockJsonSlurper = mock(JsonSlurper, constructor())
-            mockJsonSlurper.parseText('{ "some": "json" }').returns([ request: 'qwerty', response: 'asdfgh' ])
+            Gson mockJsonSlurper = mock(Gson, constructor())
+            mockJsonSlurper.toJson('{ "some": "json" }').returns([ request: 'qwerty', response: 'asdfgh' ])
         
             ImposterRequest imposterRequest = new ImposterRequest(body: 'apple')
             ImposterResponse imposterResponse = new ImposterResponse(body: 'pear')

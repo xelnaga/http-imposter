@@ -1,15 +1,17 @@
 package net.xelnaga.httpimposter
 
+
+
+import com.google.gson.Gson
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import net.xelnaga.httpimposter.factory.ImposterRequestFactory
+import net.xelnaga.httpimposter.factory.ImposterResponseFactory
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ImposterRequest
 import net.xelnaga.httpimposter.model.ImposterResponse
-import net.xelnaga.httpimposter.factory.ImposterRequestFactory
-import net.xelnaga.httpimposter.factory.ImposterResponseFactory
 import org.apache.log4j.Logger
-import groovy.json.JsonSlurper
 
 class HttpImposter {
 
@@ -55,8 +57,8 @@ class HttpImposter {
         ImposterRequestFactory requestFactory = new ImposterRequestFactory()
         ImposterResponseFactory responseFactory = new ImposterResponseFactory()
 
-        JsonSlurper jsonSlurper = new JsonSlurper()
-        def json = jsonSlurper.parseText(httpRequest.inputStream.text)
+        Gson jsonSlurper = new Gson()
+        def json = jsonSlurper.toJson(httpRequest.inputStream.text)
         
         ImposterRequest imposterRequest = requestFactory.fromJson(json.request)
         ImposterResponse imposterResponse = responseFactory.fromJson(json.response)
