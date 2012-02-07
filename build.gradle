@@ -23,10 +23,10 @@ dependencies {
             'log4j:log4j:1.2.16',
             "com.google.code.gson:gson:2.0",
             'commons-codec:commons-codec:1.6',
-            'commons-lang:commons-lang:2.3'
+            'commons-lang:commons-lang:2.4'
 
     testCompile 'org.spockframework:spock-core:0.5-groovy-1.7',
-                'org.gmock:gmock:0.8.0',
+                'org.gmock:gmock:0.8.1',
                 'org.springframework:spring-core:3.1.0.RELEASE',
                 'org.springframework:spring-test:3.1.0.RELEASE',
                 'junit:junit:4.10'
