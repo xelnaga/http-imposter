@@ -57,8 +57,8 @@ class HttpImposter {
         ImposterRequestFactory requestFactory = new ImposterRequestFactory()
         ImposterResponseFactory responseFactory = new ImposterResponseFactory()
 
-        Gson jsonSlurper = new Gson()
-        def json = jsonSlurper.toJson(httpRequest.inputStream.text)
+        Gson gson = new Gson()
+        Map json = gson.fromJson(httpRequest.inputStream.text, HashMap)
         
         ImposterRequest imposterRequest = requestFactory.fromJson(json.request)
         ImposterResponse imposterResponse = responseFactory.fromJson(json.response)

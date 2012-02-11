@@ -54,7 +54,7 @@ class HttpImposterSpec extends Specification {
             httpRequest.content = '{ "some": "json" }'.bytes
 
             Gson mockJsonSlurper = mock(Gson, constructor())
-            mockJsonSlurper.toJson('{ "some": "json" }').returns([ request: 'qwerty', response: 'asdfgh' ])
+            mockJsonSlurper.fromJson('{ "some": "json" }', HashMap).returns([ request: 'qwerty', response: 'asdfgh' ])
         
             ImposterRequest imposterRequest = new ImposterRequest(body: 'apple')
             ImposterResponse imposterResponse = new ImposterResponse(body: 'pear')
@@ -106,13 +106,11 @@ class HttpImposterSpec extends Specification {
             HttpServletResponse httpResponse = new MockHttpServletResponse()
 
         when:
-            play {
-                httpImposter.respond(httpRequest, httpResponse)
-            }
+            httpImposter.respond(httpRequest, httpResponse)
 
         then:
             httpResponse.status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR
-            httpResponse.contentType == 'text/plain'
+            httpResponse.getHeader('Content-Type') == 'text/plain'
             httpResponse.contentAsString == 'No match found for http request'
     }
     
