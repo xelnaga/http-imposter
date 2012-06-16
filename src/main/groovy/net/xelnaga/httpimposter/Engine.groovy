@@ -3,19 +3,36 @@ package net.xelnaga.httpimposter
 import net.xelnaga.httpimposter.factory.ResponsePresetFactory
 import net.xelnaga.httpimposter.model.ResponsePreset
 import net.xelnaga.httpimposter.model.RequestPattern
+import net.xelnaga.httpimposter.model.Interaction
 
 class Engine {
 
-    private static final ResponsePreset UNMATCHED = new ResponsePresetFactory().makeUnmatched()
+    private static final ResponsePreset UNEXPECTED = new ResponsePresetFactory().makeUnexpected()
 
-    private Map<RequestPattern, ResponsePreset> expectations = [:]
+    private Map<RequestPattern, Interaction> interactions = [:]
 
     void expect(RequestPattern requestPattern, ResponsePreset responsePreset) {
-        expectations.put(requestPattern, responsePreset)
+
+        Interaction interaction = new Interaction(
+                requestPattern: requestPattern,
+                responsePreset: responsePreset,
+                expected: 1,
+                actual: 0)
+
+        interactions.put(requestPattern, interaction)
     }
 
     ResponsePreset interact(RequestPattern requestPattern) {
-        return expectations.get(requestPattern, UNMATCHED)
+
+        Interaction interaction = interactions.get(requestPattern)
+        if (!interaction) {
+            interaction = makeUnmatchedInteraction(requestPattern)
+            interactions.put(requestPattern, interaction)
+        }
+
+        interaction.actual++
+
+        return interaction.responsePreset
     }
 
     boolean verify() {
@@ -23,6 +40,15 @@ class Engine {
     }
 
     void reset() {
-        expectations.clear()
+        interactions.clear()
+    }
+
+    private Interaction makeUnmatchedInteraction(RequestPattern requestPattern) {
+
+        return new Interaction(
+                requestPattern: requestPattern,
+                responsePreset: UNEXPECTED,
+                expected: 0,
+                actual: 0)
     }
 }

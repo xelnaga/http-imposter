@@ -32,6 +32,6 @@ class EngineSpec extends Specification {
             RequestPattern requestPattern = new RequestPattern(body: 'qwerty')
 
         expect:
-            engine.interact(requestPattern) == new ResponsePresetFactory().makeUnmatched()
+            engine.interact(requestPattern) == new ResponsePresetFactory().makeUnexpected()
     }
 }
