@@ -1,20 +1,21 @@
 package net.xelnaga.httpimposter
 
 import javax.servlet.http.HttpServletResponse
-import net.xelnaga.httpimposter.model.ImposterResponse
+
 import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.ResponsePreset
 
 class ResponseWriter {
 
-    HttpServletResponse write(ImposterResponse imposterResponse, HttpServletResponse httpResponse) {
+    HttpServletResponse write(ResponsePreset responsePreset, HttpServletResponse httpResponse) {
 
-        httpResponse.status = imposterResponse.status
+        httpResponse.status = responsePreset.status
 
-        imposterResponse.headers.each { HttpHeader httpHeader ->
+        responsePreset.headers.each { HttpHeader httpHeader ->
             httpResponse.addHeader(httpHeader.name, httpHeader.value)
         }
 
-        httpResponse.outputStream << imposterResponse.body
+        httpResponse.outputStream << responsePreset.body
 
         return httpResponse
     }

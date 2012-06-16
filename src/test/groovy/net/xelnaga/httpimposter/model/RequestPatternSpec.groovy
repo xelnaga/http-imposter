@@ -2,11 +2,11 @@ package net.xelnaga.httpimposter.model
 
 import spock.lang.Specification
 
-class ImposterRequestSpec extends Specification {
+class RequestPatternSpec extends Specification {
 
     def 'headers are initialised sorted set'() {
         
         expect:
-            new ImposterRequest().headers instanceof SortedSet
+            new RequestPattern().headers instanceof SortedSet
     }
 }

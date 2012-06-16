@@ -1,39 +1,40 @@
-package net.xelnaga.httpimposter.factory
+package net.xelnaga.httpimposter.marshaller
 
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.RequestPattern
-import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Specification
 
-class ImposterRequestFactorySpec extends Specification {
-    
-    RequestPatternFactory factory
+class RequestPatternMarshallerSpec extends Specification {
+
+    RequestPatternMarshaller marshaller
 
     HttpHeaderFilter mockHttpHeaderFilter
-    
+
     void setup() {
 
-        factory = new RequestPatternFactory()
-        
+        marshaller = new RequestPatternMarshaller()
+
         mockHttpHeaderFilter = Mock(HttpHeaderFilter)
-        factory.filter = mockHttpHeaderFilter
+        marshaller.filter = mockHttpHeaderFilter
     }
-    
-    def 'from http request'() {
-        
+
+    def 'from json'() {
+
         given:
-            MockHttpServletRequest httpRequest = new MockHttpServletRequest(
-                    requestURI: '/fruity/pineapple',
-                    method: 'mango',
-                    contentType: 'text/banana',
-                    content: 'qwerty'.bytes
-            )
-            httpRequest.addHeader('Pineapple', 'Passionfruit')
-            httpRequest.addHeader('Durian', 'Stinky')
+            Map json = [
+                    headers: [
+                            [name: 'Content-Type', value: 'text/banana'],
+                            [name: 'Pineapple', value: 'Passionfruit'],
+                            [name: 'Durian', value: 'Stinky']
+                    ],
+                    uri: '/fruity/pineapple',
+                    body: 'Ym9keXRlc3Q=',
+                    method: 'mango'
+            ]
 
         when:
-            RequestPattern requestPattern = factory.fromHttpRequest(httpRequest)
+            RequestPattern requestPattern = marshaller.fromJson(json)
 
         then:
             (1) * mockHttpHeaderFilter.isMatchable(new HttpHeader('Content-Type', 'text/banana')) >> true
@@ -49,7 +50,6 @@ class ImposterRequestFactorySpec extends Specification {
                             new HttpHeader('Content-Type', 'text/banana'),
                             new HttpHeader('Pineapple', 'Passionfruit')
                     ],
-                    body: 'qwerty'
-            )
+                    body: 'bodytest')
     }
 }

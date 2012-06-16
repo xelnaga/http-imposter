@@ -4,7 +4,7 @@ import groovy.transform.EqualsAndHashCode
 import net.xelnaga.httpimposter.StringPrinter
 
 @EqualsAndHashCode
-class ImposterRequest {
+class RequestPattern {
 
     String uri
     String method

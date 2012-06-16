@@ -1,30 +1,31 @@
-package net.xelnaga.httpimposter.factory
+package net.xelnaga.httpimposter.marshaller
 
 import net.xelnaga.httpimposter.model.HttpHeader
-import net.xelnaga.httpimposter.model.ImposterResponse
+import net.xelnaga.httpimposter.model.ResponsePreset
 import spock.lang.Specification
 
-class ImposterResponseFactorySpec extends Specification {
+class ResponsePresetMarshallerSpec extends Specification {
 
-    private ImposterResponseFactory factory
+    private ResponsePresetMarshaller marshaller
     
     void setup() {
-        factory = new ImposterResponseFactory()
+        marshaller = new ResponsePresetMarshaller()
     }
 
-    def 'parse response'() {
+    def 'from json'() {
         
         given:
-            Map jsonMap = [ headers: [
-                        [name: 'Content-Type', value: 'text/exciting'],
-                        [name: 'Lemon', value: 'Lime']
+            Map json = [
+                    headers: [
+                            [name: 'Content-Type', value: 'text/exciting'],
+                            [name: 'Lemon', value: 'Lime']
                     ],
                     status: 234,
                     body: 'Ym9keXRlc3Q2NA=='
             ]
         
         expect:
-            factory.fromJson(jsonMap) == new ImposterResponse(
+            marshaller.fromJson(json) == new ResponsePreset(
                     status: 234,
                     headers: [
                             new HttpHeader('Content-Type', 'text/exciting'),

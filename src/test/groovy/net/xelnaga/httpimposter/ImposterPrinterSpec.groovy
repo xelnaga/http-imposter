@@ -1,8 +1,8 @@
 package net.xelnaga.httpimposter
 
 import net.xelnaga.httpimposter.model.HttpHeader
-import net.xelnaga.httpimposter.model.ImposterRequest
-import net.xelnaga.httpimposter.model.ImposterResponse
+import net.xelnaga.httpimposter.model.RequestPattern
+import net.xelnaga.httpimposter.model.ResponsePreset
 import spock.lang.Specification
 
 class ImposterPrinterSpec extends Specification {
@@ -13,10 +13,10 @@ class ImposterPrinterSpec extends Specification {
         printer = new StringPrinter()
     }
     
-    def 'print imposter request'() {
+    def 'print request pattern'() {
         
         given:
-            ImposterRequest imposterRequest = new ImposterRequest(
+            RequestPattern requestPattern = new RequestPattern(
                     uri: '/some/uri',
                     method: 'POST',
                     headers: [
@@ -26,7 +26,7 @@ class ImposterPrinterSpec extends Specification {
                     body: 'Hello World')
         
         expect:
-            printer.print(imposterRequest) == '''POST /some/uri
+            printer.print(requestPattern) == '''POST /some/uri
 
 Content-Length: 69
 Content-Type: text/plain
@@ -35,10 +35,10 @@ Hello World
 '''
     }
     
-    def 'print imposter response'() {
+    def 'print response preset'() {
         
         given:
-            ImposterResponse imposterResponse = new ImposterResponse(
+            ResponsePreset responsePreset = new ResponsePreset(
                     status: 456,
                     headers: [
                             new HttpHeader('Content-Type', 'text/plain'),
@@ -47,7 +47,7 @@ Hello World
                     body: 'Hello World')        
 
         expect:
-            printer.print(imposterResponse) == '''HTTP/1.1 456
+            printer.print(responsePreset) == '''HTTP/1.1 456
 
 Content-Length: 69
 Content-Type: text/plain

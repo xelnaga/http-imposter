@@ -1,14 +1,15 @@
-package net.xelnaga.httpimposter.factory
+package net.xelnaga.httpimposter.marshaller
 
 import net.xelnaga.httpimposter.model.HttpHeader
-import net.xelnaga.httpimposter.model.ImposterResponse
+
 import org.apache.commons.codec.binary.Base64
+import net.xelnaga.httpimposter.model.ResponsePreset
 
-class ImposterResponseFactory {
+class ResponsePresetMarshaller {
 
-    ImposterResponse fromJson(Map json) {
+    ResponsePreset fromJson(Map json) {
         
-        ImposterResponse imposterResponse = new ImposterResponse(
+        ResponsePreset imposterResponse = new ResponsePreset(
                 status: json.status,
                 body: new String(Base64.decodeBase64((String) json.body))
         )

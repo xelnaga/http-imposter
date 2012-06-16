@@ -1,25 +1,25 @@
 package net.xelnaga.httpimposter
 
-import net.xelnaga.httpimposter.model.ImposterResponse
 import net.xelnaga.httpimposter.model.HttpHeader
-import net.xelnaga.httpimposter.model.ImposterRequest
+import net.xelnaga.httpimposter.model.RequestPattern
+import net.xelnaga.httpimposter.model.ResponsePreset
 
 class StringPrinter {
 
-    String print(ImposterRequest imposterRequest) {
+    String print(RequestPattern requestPattern) {
 
-        String output = "${imposterRequest.method} ${imposterRequest.uri}\n\n"
-        output += printHeaders(imposterRequest.headers)
-        output += "\n\n${imposterRequest.body}\n"
+        String output = "${requestPattern.method} ${requestPattern.uri}\n\n"
+        output += printHeaders(requestPattern.headers)
+        output += "\n\n${requestPattern.body}\n"
 
         return output
     }
 
-    String print(ImposterResponse imposterResponse) {
+    String print(ResponsePreset responsePreset) {
 
-        String output = "HTTP/1.1 ${imposterResponse.status}\n\n"
-        output += printHeaders(imposterResponse.headers)
-        output += "\n\n${imposterResponse.body}\n"
+        String output = "HTTP/1.1 ${responsePreset.status}\n\n"
+        output += printHeaders(responsePreset.headers)
+        output += "\n\n${responsePreset.body}\n"
 
         return output
     }

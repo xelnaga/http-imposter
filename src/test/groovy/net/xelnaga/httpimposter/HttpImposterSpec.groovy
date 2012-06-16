@@ -1,12 +1,13 @@
 package net.xelnaga.httpimposter
 
 import com.google.gson.Gson
-import net.xelnaga.httpimposter.factory.ImposterRequestFactory
-import net.xelnaga.httpimposter.factory.ImposterResponseFactory
+import net.xelnaga.httpimposter.factory.RequestPatternFactory
 import net.xelnaga.httpimposter.filter.HeaderNameExclusionFilter
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
-import net.xelnaga.httpimposter.model.ImposterRequest
-import net.xelnaga.httpimposter.model.ImposterResponse
+import net.xelnaga.httpimposter.marshaller.RequestPatternMarshaller
+import net.xelnaga.httpimposter.marshaller.ResponsePresetMarshaller
+import net.xelnaga.httpimposter.model.RequestPattern
+import net.xelnaga.httpimposter.model.ResponsePreset
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import spock.lang.Specification
@@ -18,40 +19,44 @@ class HttpImposterSpec extends Specification {
 
     HttpImposter httpImposter
 
-    ImposterRequestFactory mockImposterRequestFactory
-    ImposterResponseFactory mockImposterResponseFactory
+    RequestPatternFactory mockRequestPatternFactory
+    RequestPatternMarshaller mockRequestPatternMarshaller
+    ResponsePresetMarshaller mockResponsePresetMarshaller
 
     void setup() {
 
         httpImposter = new HttpImposter()
 
-        mockImposterRequestFactory = Mock(ImposterRequestFactory)
-        httpImposter.requestFactory = mockImposterRequestFactory
+        mockRequestPatternFactory = Mock(RequestPatternFactory)
+        httpImposter.requestPatternFactory = mockRequestPatternFactory
 
-        mockImposterResponseFactory = Mock(ImposterResponseFactory)
-        httpImposter.responseFactory = mockImposterResponseFactory
+        mockRequestPatternMarshaller = Mock(RequestPatternMarshaller)
+        httpImposter.requestPatternMarshaller = mockRequestPatternMarshaller
+
+        mockResponsePresetMarshaller = Mock(ResponsePresetMarshaller)
+        httpImposter.responsePresetMarshaller = mockResponsePresetMarshaller
     }
 
     def 'get when mapping exists'() {
 
         given:
-            ImposterRequest request = new ImposterRequest(body: 'hello')
-            ImposterResponse response = new ImposterResponse(body: 'world')
+            RequestPattern requestPattern = new RequestPattern(body: 'hello')
+            ResponsePreset responsePreset = new ResponsePreset(body: 'world')
 
         when:
-            httpImposter.put(request, response)
+            httpImposter.put(requestPattern, responsePreset)
 
         then:
-            httpImposter.get(request) == response
+            httpImposter.get(requestPattern) == responsePreset
     }
 
     def 'get when mapping does not exist'() {
     
         given:
-            ImposterRequest request = new ImposterRequest(body: 'hello')
+            RequestPattern requestPattern = new RequestPattern(body: 'hello')
         
         expect:
-            httpImposter.get(request) == null
+            httpImposter.get(requestPattern) == null
     }
    
     def 'configure'() {
@@ -60,19 +65,19 @@ class HttpImposterSpec extends Specification {
             HttpServletRequest httpRequest = new MockHttpServletRequest()
             httpRequest.content = new Gson().toJson([request: [qwerty: 'qwerty'], response: [asdfgh: 'asdfgh']]).bytes
 
-            ImposterRequest imposterRequest = new ImposterRequest(body: 'apple')
-            ImposterResponse imposterResponse = new ImposterResponse(body: 'pear')
+            RequestPattern requestPattern = new RequestPattern(body: 'apple')
+            ResponsePreset responsePreset = new ResponsePreset(body: 'pear')
 
         when:
             httpImposter.configure(httpRequest)
 
         then:
-            (1) * mockImposterRequestFactory.fromJson([qwerty: 'qwerty']) >> imposterRequest
-            (1) * mockImposterResponseFactory.fromJson([asdfgh: 'asdfgh']) >> imposterResponse
+            (1) * mockRequestPatternMarshaller.fromJson([qwerty: 'qwerty']) >> requestPattern
+            (1) * mockResponsePresetMarshaller.fromJson([asdfgh: 'asdfgh']) >> responsePreset
             (0) * _._
 
         and:
-            httpImposter.get(imposterRequest) == imposterResponse
+            httpImposter.get(requestPattern) == responsePreset
     }
 
     def 'respond when match'() {
@@ -81,16 +86,16 @@ class HttpImposterSpec extends Specification {
             HttpServletRequest httpRequest = new MockHttpServletRequest(content: 'apple'.bytes)
             HttpServletResponse httpResponse = new MockHttpServletResponse()
 
-            ImposterRequest imposterRequest = new ImposterRequest(body: 'hello')
-            ImposterResponse imposterResponse = new ImposterResponse(status: 234, body: 'pear')
+            RequestPattern requestPattern = new RequestPattern(body: 'hello')
+            ResponsePreset responsePreset = new ResponsePreset(status: 234, body: 'pear')
         
-            httpImposter.put(imposterRequest, imposterResponse)
+            httpImposter.put(requestPattern, responsePreset)
         
         when:
             httpImposter.respond(httpRequest, httpResponse)
 
         then:
-            (1) * mockImposterRequestFactory.fromHttpRequest(httpRequest) >> imposterRequest
+            (1) * mockRequestPatternFactory.fromHttpRequest(httpRequest) >> requestPattern
             (0) *_._
 
         and:
@@ -105,13 +110,13 @@ class HttpImposterSpec extends Specification {
             HttpServletRequest httpRequest = new MockHttpServletRequest(content: 'apple'.bytes)
             HttpServletResponse httpResponse = new MockHttpServletResponse()
 
-            ImposterRequest imposterRequest = new ImposterRequest(body: 'hello')
+            RequestPattern requestPattern = new RequestPattern(body: 'hello')
 
         when:
             httpImposter.respond(httpRequest, httpResponse)
 
         then:
-            (1) * mockImposterRequestFactory.fromHttpRequest(httpRequest) >> imposterRequest
+            (1) * mockRequestPatternFactory.fromHttpRequest(httpRequest) >> requestPattern
             (0) * _._
 
         and:
@@ -124,9 +129,9 @@ class HttpImposterSpec extends Specification {
     def 'reset'() {
 
         given:
-            ImposterRequest request = new ImposterRequest(body: 'hello')
-            ImposterResponse response = new ImposterResponse(body: 'world')
-            httpImposter.put(request, response)
+            RequestPattern requestPattern = new RequestPattern(body: 'hello')
+            ResponsePreset responsePreset = new ResponsePreset(body: 'world')
+            httpImposter.put(requestPattern, responsePreset)
 
         when:
             httpImposter.reset()
@@ -135,7 +140,7 @@ class HttpImposterSpec extends Specification {
             (0) * _._
 
         and:
-            httpImposter.get(request) == null
+            httpImposter.get(requestPattern) == null
     }
     
     def 'set filter'() {
@@ -150,6 +155,6 @@ class HttpImposterSpec extends Specification {
             (0) * _._
 
         and:
-            httpImposter.requestFactory.filter.is(filter)
+            httpImposter.requestPatternFactory.filter.is(filter)
     }
 }

@@ -1,9 +1,9 @@
 package net.xelnaga.httpimposter
 
+import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.ResponsePreset
 import org.springframework.mock.web.MockHttpServletResponse
 import spock.lang.Specification
-import net.xelnaga.httpimposter.model.ImposterResponse
-import net.xelnaga.httpimposter.model.HttpHeader
 
 class ImposterResponseWriterSpec extends Specification {
 
@@ -16,7 +16,7 @@ class ImposterResponseWriterSpec extends Specification {
     def 'write'() {
         
         given:
-            ImposterResponse imposterResponse = new ImposterResponse(
+            ResponsePreset responsePreset = new ResponsePreset(
                     status: 234,
                     headers: [
                         new HttpHeader('Content-Type', 'text/exciting'),
@@ -28,7 +28,7 @@ class ImposterResponseWriterSpec extends Specification {
             MockHttpServletResponse httpResponse = new MockHttpServletResponse()
         
         when:
-            writer.write(imposterResponse, httpResponse)
+            writer.write(responsePreset, httpResponse)
         
         then:
             httpResponse.status == 234

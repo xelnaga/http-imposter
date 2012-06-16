@@ -4,7 +4,7 @@ import groovy.transform.EqualsAndHashCode
 import net.xelnaga.httpimposter.StringPrinter
 
 @EqualsAndHashCode
-class ImposterResponse {
+class ResponsePreset {
 
     int status
     Set<HttpHeader> headers = [] as TreeSet

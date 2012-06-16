@@ -1,8 +1,7 @@
 package net.xelnaga.httpimposter.filter
 
-import spock.lang.Specification
 import net.xelnaga.httpimposter.model.HttpHeader
-import net.xelnaga.httpimposter.filter.HeaderNameExclusionFilter
+import spock.lang.Specification
 
 class HeaderNameExclusionFilterSpec extends Specification {
 
