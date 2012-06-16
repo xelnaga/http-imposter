@@ -34,8 +34,8 @@ class HttpImposter {
 
         Map json = gson.fromJson(httpRequest.inputStream.text, HashMap)
 
-        RequestPattern requestPattern = requestPatternMarshaller.fromJson(json.request)
-        ResponsePreset responsePreset = responsePresetMarshaller.fromJson(json.response)
+        RequestPattern requestPattern = requestPatternMarshaller.fromJson(json.requestPattern)
+        ResponsePreset responsePreset = responsePresetMarshaller.fromJson(json.responsePreset)
 
         engine.expect(requestPattern, responsePreset)
     }

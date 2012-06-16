@@ -69,7 +69,7 @@ class HttpImposterSpec extends Specification {
         
         given:
             HttpServletRequest httpRequest = new MockHttpServletRequest()
-            httpRequest.content = new Gson().toJson([request: [qwerty: 'qwerty'], response: [asdfgh: 'asdfgh']]).bytes
+            httpRequest.content = new Gson().toJson([requestPattern: [qwerty: 'qwerty'], responsePreset: [asdfgh: 'asdfgh']]).bytes
 
             RequestPattern requestPattern = new RequestPattern(body: 'apple')
             ResponsePreset responsePreset = new ResponsePreset(body: 'pear')
