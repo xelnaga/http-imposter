@@ -2,8 +2,9 @@ package net.xelnaga.httpimposter
 
 import com.google.gson.Gson
 import net.xelnaga.httpimposter.factory.RequestPatternFactory
-import net.xelnaga.httpimposter.marshaller.ResponsePresetMarshaller
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
+import net.xelnaga.httpimposter.marshaller.RequestPatternMarshaller
+import net.xelnaga.httpimposter.marshaller.ResponsePresetMarshaller
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
@@ -11,7 +12,6 @@ import org.apache.log4j.Logger
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import net.xelnaga.httpimposter.marshaller.RequestPatternMarshaller
 
 class HttpImposter {
 
@@ -33,7 +33,7 @@ class HttpImposter {
 
     ResponseWriter responseWriter = new ResponseWriter()
 
-    private Map<RequestPattern, ResponsePreset> map = [:]
+    private Map<RequestPattern, ResponsePreset> expectations = [:]
     private int unmatched
 
     HttpImposter() {
@@ -41,13 +41,29 @@ class HttpImposter {
     }
 
     void setFilter(HttpHeaderFilter filter) {
-        requestPatternFactory = new RequestPatternFactory(filter: filter)
+
+        requestPatternFactory.filter = filter
+        requestPatternMarshaller.filter = filter
     }
 
-    void respond(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+    void expect(HttpServletRequest httpRequest) {
+
+        Map json = gson.fromJson(httpRequest.inputStream.text, HashMap)
+
+        RequestPattern requestPattern = requestPatternMarshaller.fromJson(json.request)
+        ResponsePreset responsePreset = responsePresetMarshaller.fromJson(json.response)
+
+        expectations.put(requestPattern, responsePreset)
+    }
+
+    void expect(RequestPattern requestPattern, ResponsePreset responsePreset) {
+        expectations[requestPattern] = responsePreset
+    }
+
+    void interact(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
         RequestPattern requestPattern = requestPatternFactory.fromHttpRequest(httpRequest)
-        ResponsePreset responsePreset = map.get(requestPattern)
+        ResponsePreset responsePreset = expectations.get(requestPattern)
 
         if (responsePreset) {
             logInteraction(requestPattern, responsePreset, true)
@@ -59,30 +75,17 @@ class HttpImposter {
         }
     }
 
-    void configure(HttpServletRequest httpRequest) {
-
-        Map json = gson.fromJson(httpRequest.inputStream.text, HashMap)
-        
-        RequestPattern requestPattern = requestPatternMarshaller.fromJson(json.request)
-        ResponsePreset responsePreset = responsePresetMarshaller.fromJson(json.response)
-
-        map.put(requestPattern, responsePreset)
-    }
-
-    void put(RequestPattern requestPattern, ResponsePreset responsePreset) {
-        map[requestPattern] = responsePreset
-    }
-
-    ResponsePreset get(RequestPattern requestPattern) {
-        return map[requestPattern]
-    }
-
-    boolean hasUnmatched() {
+    boolean verify() {
         return unmatched > 0
     }
 
+    ResponsePreset get(RequestPattern requestPattern) {
+        return expectations[requestPattern]
+    }
+
     void reset() {
-        map.clear()
+
+        expectations.clear()
         unmatched = 0
     }
 

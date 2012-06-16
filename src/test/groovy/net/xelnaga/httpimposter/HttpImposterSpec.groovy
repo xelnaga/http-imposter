@@ -37,6 +37,20 @@ class HttpImposterSpec extends Specification {
         httpImposter.responsePresetMarshaller = mockResponsePresetMarshaller
     }
 
+    def 'set filter'() {
+
+        given:
+        HttpHeaderFilter filter = new HeaderNameExclusionFilter(['qwerty'])
+
+        when:
+        httpImposter.setFilter(filter)
+
+        then:
+        (1) * mockRequestPatternFactory.setProperty('filter', filter)
+        (1) * mockRequestPatternMarshaller.setProperty('filter', filter)
+        (0) * _._
+    }
+
     def 'get when mapping exists'() {
 
         given:
@@ -44,7 +58,7 @@ class HttpImposterSpec extends Specification {
             ResponsePreset responsePreset = new ResponsePreset(body: 'world')
 
         when:
-            httpImposter.put(requestPattern, responsePreset)
+            httpImposter.expect(requestPattern, responsePreset)
 
         then:
             httpImposter.get(requestPattern) == responsePreset
@@ -59,7 +73,7 @@ class HttpImposterSpec extends Specification {
             httpImposter.get(requestPattern) == null
     }
    
-    def 'configure'() {
+    def 'expect'() {
         
         given:
             HttpServletRequest httpRequest = new MockHttpServletRequest()
@@ -69,7 +83,7 @@ class HttpImposterSpec extends Specification {
             ResponsePreset responsePreset = new ResponsePreset(body: 'pear')
 
         when:
-            httpImposter.configure(httpRequest)
+            httpImposter.expect(httpRequest)
 
         then:
             (1) * mockRequestPatternMarshaller.fromJson([qwerty: 'qwerty']) >> requestPattern
@@ -80,7 +94,7 @@ class HttpImposterSpec extends Specification {
             httpImposter.get(requestPattern) == responsePreset
     }
 
-    def 'respond when match'() {
+    def 'interact when http request has match'() {
     
         given:
             HttpServletRequest httpRequest = new MockHttpServletRequest(content: 'apple'.bytes)
@@ -89,10 +103,10 @@ class HttpImposterSpec extends Specification {
             RequestPattern requestPattern = new RequestPattern(body: 'hello')
             ResponsePreset responsePreset = new ResponsePreset(status: 234, body: 'pear')
         
-            httpImposter.put(requestPattern, responsePreset)
+            httpImposter.expect(requestPattern, responsePreset)
         
         when:
-            httpImposter.respond(httpRequest, httpResponse)
+            httpImposter.interact(httpRequest, httpResponse)
 
         then:
             (1) * mockRequestPatternFactory.fromHttpRequest(httpRequest) >> requestPattern
@@ -101,10 +115,10 @@ class HttpImposterSpec extends Specification {
         and:
             httpResponse.status == 234
             httpResponse.contentAsString == 'pear'
-            !httpImposter.hasUnmatched()
+            !httpImposter.verify()
     }
     
-    def 'respond when no match'() {
+    def 'interact when http request has no match'() {
 
         given:
             HttpServletRequest httpRequest = new MockHttpServletRequest(content: 'apple'.bytes)
@@ -113,7 +127,7 @@ class HttpImposterSpec extends Specification {
             RequestPattern requestPattern = new RequestPattern(body: 'hello')
 
         when:
-            httpImposter.respond(httpRequest, httpResponse)
+            httpImposter.interact(httpRequest, httpResponse)
 
         then:
             (1) * mockRequestPatternFactory.fromHttpRequest(httpRequest) >> requestPattern
@@ -123,7 +137,7 @@ class HttpImposterSpec extends Specification {
             httpResponse.status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR
             httpResponse.getHeader('Content-Type') == 'text/plain'
             httpResponse.contentAsString == 'No match found for http request'
-            httpImposter.hasUnmatched()
+            httpImposter.verify()
     }
     
     def 'reset'() {
@@ -131,7 +145,7 @@ class HttpImposterSpec extends Specification {
         given:
             RequestPattern requestPattern = new RequestPattern(body: 'hello')
             ResponsePreset responsePreset = new ResponsePreset(body: 'world')
-            httpImposter.put(requestPattern, responsePreset)
+            httpImposter.expect(requestPattern, responsePreset)
 
         when:
             httpImposter.reset()
@@ -141,20 +155,5 @@ class HttpImposterSpec extends Specification {
 
         and:
             httpImposter.get(requestPattern) == null
-    }
-    
-    def 'set filter'() {
-        
-        given:
-            HttpHeaderFilter filter = new HeaderNameExclusionFilter(['qwerty'])
-        
-        when:
-            httpImposter.setFilter(filter)
-
-        then:
-            (0) * _._
-
-        and:
-            httpImposter.requestPatternFactory.filter.is(filter)
     }
 }
