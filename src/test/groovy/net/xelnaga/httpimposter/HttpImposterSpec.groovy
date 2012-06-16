@@ -23,6 +23,11 @@ class HttpImposterSpec extends Specification {
     RequestPatternMarshaller mockRequestPatternMarshaller
     ResponsePresetMarshaller mockResponsePresetMarshaller
 
+    Engine mockEngine
+
+    LogWriter mockLogWriter
+    ResponseWriter mockResponseWriter
+
     void setup() {
 
         httpImposter = new HttpImposter()
@@ -35,44 +40,31 @@ class HttpImposterSpec extends Specification {
 
         mockResponsePresetMarshaller = Mock(ResponsePresetMarshaller)
         httpImposter.responsePresetMarshaller = mockResponsePresetMarshaller
+
+        mockEngine = Mock(Engine)
+        httpImposter.engine = mockEngine
+
+        mockLogWriter = Mock(LogWriter)
+        httpImposter.logWriter = mockLogWriter
+
+        mockResponseWriter = Mock(ResponseWriter)
+        httpImposter.responseWriter = mockResponseWriter
     }
 
     def 'set filter'() {
 
         given:
-        HttpHeaderFilter filter = new HeaderNameExclusionFilter(['qwerty'])
+            HttpHeaderFilter filter = new HeaderNameExclusionFilter(['qwerty'])
 
         when:
-        httpImposter.setFilter(filter)
+            httpImposter.setFilter(filter)
 
         then:
-        (1) * mockRequestPatternFactory.setProperty('filter', filter)
-        (1) * mockRequestPatternMarshaller.setProperty('filter', filter)
-        (0) * _._
+            (1) * mockRequestPatternFactory.setProperty('filter', filter)
+            (1) * mockRequestPatternMarshaller.setProperty('filter', filter)
+            (0) * _._
     }
 
-    def 'get when mapping exists'() {
-
-        given:
-            RequestPattern requestPattern = new RequestPattern(body: 'hello')
-            ResponsePreset responsePreset = new ResponsePreset(body: 'world')
-
-        when:
-            httpImposter.expect(requestPattern, responsePreset)
-
-        then:
-            httpImposter.get(requestPattern) == responsePreset
-    }
-
-    def 'get when mapping does not exist'() {
-    
-        given:
-            RequestPattern requestPattern = new RequestPattern(body: 'hello')
-        
-        expect:
-            httpImposter.get(requestPattern) == null
-    }
-   
     def 'expect'() {
         
         given:
@@ -88,13 +80,11 @@ class HttpImposterSpec extends Specification {
         then:
             (1) * mockRequestPatternMarshaller.fromJson([qwerty: 'qwerty']) >> requestPattern
             (1) * mockResponsePresetMarshaller.fromJson([asdfgh: 'asdfgh']) >> responsePreset
+            (1) * mockEngine.expect(requestPattern, responsePreset)
             (0) * _._
-
-        and:
-            httpImposter.get(requestPattern) == responsePreset
     }
 
-    def 'interact when http request has match'() {
+    def 'interact'() {
     
         given:
             HttpServletRequest httpRequest = new MockHttpServletRequest(content: 'apple'.bytes)
@@ -103,57 +93,25 @@ class HttpImposterSpec extends Specification {
             RequestPattern requestPattern = new RequestPattern(body: 'hello')
             ResponsePreset responsePreset = new ResponsePreset(status: 234, body: 'pear')
         
-            httpImposter.expect(requestPattern, responsePreset)
-        
+
         when:
             httpImposter.interact(httpRequest, httpResponse)
 
         then:
             (1) * mockRequestPatternFactory.fromHttpRequest(httpRequest) >> requestPattern
+            (1) * mockEngine.interact(requestPattern) >> responsePreset
+            (1) * mockLogWriter.interact(requestPattern, responsePreset)
+            (1) * mockResponseWriter.write(responsePreset, httpResponse)
             (0) *_._
-
-        and:
-            httpResponse.status == 234
-            httpResponse.contentAsString == 'pear'
-            !httpImposter.verify()
-    }
-    
-    def 'interact when http request has no match'() {
-
-        given:
-            HttpServletRequest httpRequest = new MockHttpServletRequest(content: 'apple'.bytes)
-            HttpServletResponse httpResponse = new MockHttpServletResponse()
-
-            RequestPattern requestPattern = new RequestPattern(body: 'hello')
-
-        when:
-            httpImposter.interact(httpRequest, httpResponse)
-
-        then:
-            (1) * mockRequestPatternFactory.fromHttpRequest(httpRequest) >> requestPattern
-            (0) * _._
-
-        and:
-            httpResponse.status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR
-            httpResponse.getHeader('Content-Type') == 'text/plain'
-            httpResponse.contentAsString == 'No match found for http request'
-            httpImposter.verify()
     }
     
     def 'reset'() {
-
-        given:
-            RequestPattern requestPattern = new RequestPattern(body: 'hello')
-            ResponsePreset responsePreset = new ResponsePreset(body: 'world')
-            httpImposter.expect(requestPattern, responsePreset)
 
         when:
             httpImposter.reset()
 
         then:
+            (1) * mockEngine.reset()
             (0) * _._
-
-        and:
-            httpImposter.get(requestPattern) == null
     }
 }

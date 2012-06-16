@@ -6,7 +6,7 @@ import net.xelnaga.httpimposter.model.RequestPattern
 import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Specification
 
-class ImposterRequestFactorySpec extends Specification {
+class RequestPatternFactorySpec extends Specification {
     
     RequestPatternFactory factory
 
