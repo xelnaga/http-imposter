@@ -1,23 +1,21 @@
 package net.xelnaga.httpimposter.factory
 
+import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ImposterRequest
 import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Specification
-import org.gmock.WithGMock
-import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 
-@WithGMock
 class ImposterRequestFactorySpec extends Specification {
     
     private ImposterRequestFactory factory
-    private HttpHeaderFilter mockFilter
+    private HttpHeaderFilter mockHttpHeaderFilter
     
     void setup() {
         factory = new ImposterRequestFactory()
         
-        mockFilter = mock(HttpHeaderFilter)
-        factory.filter = mockFilter
+        mockHttpHeaderFilter = Mock(HttpHeaderFilter)
+        factory.filter = mockHttpHeaderFilter
     }
     
     def 'from http request'() {
@@ -31,19 +29,17 @@ class ImposterRequestFactorySpec extends Specification {
             )
             httpRequest.addHeader('Pineapple', 'Passionfruit')
             httpRequest.addHeader('Durian', 'Stinky')
-        
-        and:
-            mockFilter.isMatchable(new HttpHeader('Content-Type', 'text/banana')).returns(true)
-            mockFilter.isMatchable(new HttpHeader('Pineapple', 'Passionfruit')).returns(true)
-            mockFilter.isMatchable(new HttpHeader('Durian', 'Stinky')).returns(false)
 
         when:
-            ImposterRequest imposterRequest = null
-            play {
-                imposterRequest = factory.fromHttpRequest(httpRequest)
-            }
+            ImposterRequest imposterRequest = factory.fromHttpRequest(httpRequest)
 
         then:
+            (1) * mockHttpHeaderFilter.isMatchable(new HttpHeader('Content-Type', 'text/banana')) >> true
+            (1) * mockHttpHeaderFilter.isMatchable(new HttpHeader('Pineapple', 'Passionfruit')) >> true
+            (1) * mockHttpHeaderFilter.isMatchable(new HttpHeader('Durian', 'Stinky')) >> false
+            (0) * _._
+
+        and:
             imposterRequest == new ImposterRequest(
                     uri: '/fruity/pineapple',
                     method: 'mango',
@@ -60,7 +56,7 @@ class ImposterRequestFactorySpec extends Specification {
         given:
             Map jsonMap = [
                     headers: [
-                            [ name: 'Content-Type', value: 'text/banana'],
+                            [name: 'Content-Type', value: 'text/banana'],
                             [name: 'Pineapple', value: 'Passionfruit'],
                             [name: 'Durian', value: 'Stinky']
                     ],
@@ -69,18 +65,16 @@ class ImposterRequestFactorySpec extends Specification {
                     method: 'mango'
             ]
 
-        and:
-            mockFilter.isMatchable(new HttpHeader('Content-Type', 'text/banana')).returns(true)
-            mockFilter.isMatchable(new HttpHeader('Pineapple', 'Passionfruit')).returns(true)
-            mockFilter.isMatchable(new HttpHeader('Durian', 'Stinky')).returns(false)
-
         when:
-            ImposterRequest imposterRequest = null
-            play {
-                imposterRequest = factory.fromJson(jsonMap)
-            }
+            ImposterRequest imposterRequest = factory.fromJson(jsonMap)
 
         then:
+            (1) * mockHttpHeaderFilter.isMatchable(new HttpHeader('Content-Type', 'text/banana')) >> true
+            (1) * mockHttpHeaderFilter.isMatchable(new HttpHeader('Pineapple', 'Passionfruit')) >> true
+            (1) * mockHttpHeaderFilter.isMatchable(new HttpHeader('Durian', 'Stinky')) >> false
+            (0) * _._
+
+        and:
             imposterRequest == new ImposterRequest(
                     uri: '/fruity/pineapple',
                     method: 'mango',

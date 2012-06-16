@@ -11,6 +11,7 @@ import org.apache.log4j.Logger
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import groovy.json.JsonSlurper
 
 class HttpImposter {
 
@@ -24,7 +25,10 @@ class HttpImposter {
             body: 'No match found for http request'
     )
 
-    ImposterRequestFactory requestReader = new ImposterRequestFactory()
+    Gson gson = new Gson()
+    ImposterRequestFactory requestFactory = new ImposterRequestFactory()
+    ImposterResponseFactory responseFactory = new ImposterResponseFactory()
+
     ResponseWriter responseWriter = new ResponseWriter()
 
     private Map<ImposterRequest, ImposterResponse> map = [:]
@@ -35,12 +39,12 @@ class HttpImposter {
     }
 
     void setFilter(HttpHeaderFilter filter) {
-        requestReader = new ImposterRequestFactory(filter: filter)
+        requestFactory = new ImposterRequestFactory(filter: filter)
     }
 
     void respond(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
-        ImposterRequest imposterRequest = requestReader.fromHttpRequest(httpRequest)
+        ImposterRequest imposterRequest = requestFactory.fromHttpRequest(httpRequest)
         ImposterResponse imposterResponse = map.get(imposterRequest)
 
         if (imposterResponse) {
@@ -55,10 +59,6 @@ class HttpImposter {
 
     void configure(HttpServletRequest httpRequest) {
 
-        ImposterRequestFactory requestFactory = new ImposterRequestFactory()
-        ImposterResponseFactory responseFactory = new ImposterResponseFactory()
-
-        Gson gson = new Gson()
         Map json = gson.fromJson(httpRequest.inputStream.text, HashMap)
         
         ImposterRequest imposterRequest = requestFactory.fromJson(json.request)

@@ -1,28 +1,35 @@
 package net.xelnaga.httpimposter
 
-import spock.lang.Specification
-
-import net.xelnaga.httpimposter.model.ImposterResponse
-import javax.servlet.http.HttpServletRequest
-import org.springframework.mock.web.MockHttpServletRequest
-import org.gmock.WithGMock
-import org.springframework.mock.web.MockHttpServletResponse
-import javax.servlet.http.HttpServletResponse
-
-import net.xelnaga.httpimposter.model.ImposterRequest
-import net.xelnaga.httpimposter.filter.HttpHeaderFilter
-import net.xelnaga.httpimposter.filter.HeaderNameExclusionFilter
+import com.google.gson.Gson
 import net.xelnaga.httpimposter.factory.ImposterRequestFactory
 import net.xelnaga.httpimposter.factory.ImposterResponseFactory
-import com.google.gson.Gson
+import net.xelnaga.httpimposter.filter.HeaderNameExclusionFilter
+import net.xelnaga.httpimposter.filter.HttpHeaderFilter
+import net.xelnaga.httpimposter.model.ImposterRequest
+import net.xelnaga.httpimposter.model.ImposterResponse
+import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.mock.web.MockHttpServletResponse
+import spock.lang.Specification
 
-@WithGMock
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+
 class HttpImposterSpec extends Specification {
 
-    private HttpImposter httpImposter
-    
+    HttpImposter httpImposter
+
+    ImposterRequestFactory mockImposterRequestFactory
+    ImposterResponseFactory mockImposterResponseFactory
+
     void setup() {
+
         httpImposter = new HttpImposter()
+
+        mockImposterRequestFactory = Mock(ImposterRequestFactory)
+        httpImposter.requestFactory = mockImposterRequestFactory
+
+        mockImposterResponseFactory = Mock(ImposterResponseFactory)
+        httpImposter.responseFactory = mockImposterResponseFactory
     }
 
     def 'get when mapping exists'() {
@@ -51,48 +58,42 @@ class HttpImposterSpec extends Specification {
         
         given:
             HttpServletRequest httpRequest = new MockHttpServletRequest()
-            httpRequest.content = '{ "some": "json" }'.bytes
+            httpRequest.content = new Gson().toJson([request: [qwerty: 'qwerty'], response: [asdfgh: 'asdfgh']]).bytes
 
-            Gson mockJsonSlurper = mock(Gson, constructor())
-            mockJsonSlurper.fromJson('{ "some": "json" }', HashMap).returns([ request: 'qwerty', response: 'asdfgh' ])
-        
             ImposterRequest imposterRequest = new ImposterRequest(body: 'apple')
             ImposterResponse imposterResponse = new ImposterResponse(body: 'pear')
-            
-            ImposterRequestFactory mockImposterRequestFactory = mock(ImposterRequestFactory, constructor())
-            mockImposterRequestFactory.fromJson('qwerty').returns(imposterRequest)
 
-            ImposterResponseFactory mockImposterResponseFactory = mock(ImposterResponseFactory, constructor())
-            mockImposterResponseFactory.fromJson('asdfgh').returns(imposterResponse)
-        
         when:
-            play {
-                httpImposter.configure(httpRequest)
-            }
+            httpImposter.configure(httpRequest)
 
         then:
+            (1) * mockImposterRequestFactory.fromJson([qwerty: 'qwerty']) >> imposterRequest
+            (1) * mockImposterResponseFactory.fromJson([asdfgh: 'asdfgh']) >> imposterResponse
+            (0) * _._
+
+        and:
             httpImposter.get(imposterRequest) == imposterResponse
     }
 
     def 'respond when match'() {
     
         given:
-            HttpServletRequest httpRequest = new MockHttpServletRequest()
-            httpRequest.content = 'apple'.bytes
-
+            HttpServletRequest httpRequest = new MockHttpServletRequest(content: 'apple'.bytes)
             HttpServletResponse httpResponse = new MockHttpServletResponse()
 
-            ImposterRequest imposterRequest = new ImposterRequestFactory().fromHttpRequest(httpRequest)
+            ImposterRequest imposterRequest = new ImposterRequest(body: 'hello')
             ImposterResponse imposterResponse = new ImposterResponse(status: 234, body: 'pear')
         
             httpImposter.put(imposterRequest, imposterResponse)
         
         when:
-            play {
-                httpImposter.respond(httpRequest, httpResponse)    
-            }
-        
+            httpImposter.respond(httpRequest, httpResponse)
+
         then:
+            (1) * mockImposterRequestFactory.fromHttpRequest(httpRequest) >> imposterRequest
+            (0) *_._
+
+        and:
             httpResponse.status == 234
             httpResponse.contentAsString == 'pear'
             !httpImposter.hasUnmatched()
@@ -101,15 +102,19 @@ class HttpImposterSpec extends Specification {
     def 'respond when no match'() {
 
         given:
-            HttpServletRequest httpRequest = new MockHttpServletRequest()
-            httpRequest.content = 'apple'.bytes
-
+            HttpServletRequest httpRequest = new MockHttpServletRequest(content: 'apple'.bytes)
             HttpServletResponse httpResponse = new MockHttpServletResponse()
+
+            ImposterRequest imposterRequest = new ImposterRequest(body: 'hello')
 
         when:
             httpImposter.respond(httpRequest, httpResponse)
 
         then:
+            (1) * mockImposterRequestFactory.fromHttpRequest(httpRequest) >> imposterRequest
+            (0) * _._
+
+        and:
             httpResponse.status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR
             httpResponse.getHeader('Content-Type') == 'text/plain'
             httpResponse.contentAsString == 'No match found for http request'
@@ -127,18 +132,24 @@ class HttpImposterSpec extends Specification {
             httpImposter.reset()
 
         then:
+            (0) * _._
+
+        and:
             httpImposter.get(request) == null
     }
     
     def 'set filter'() {
         
         given:
-            HttpHeaderFilter filter = new HeaderNameExclusionFilter([ 'qwerty' ])
+            HttpHeaderFilter filter = new HeaderNameExclusionFilter(['qwerty'])
         
         when:
             httpImposter.setFilter(filter)
 
         then:
-            httpImposter.requestReader.filter.is(filter)
+            (0) * _._
+
+        and:
+            httpImposter.requestFactory.filter.is(filter)
     }
 }
