@@ -1,10 +1,6 @@
 package net.xelnaga.httpimposter
 
-
-
 import com.google.gson.Gson
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 import net.xelnaga.httpimposter.factory.ImposterRequestFactory
 import net.xelnaga.httpimposter.factory.ImposterResponseFactory
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
@@ -12,6 +8,9 @@ import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ImposterRequest
 import net.xelnaga.httpimposter.model.ImposterResponse
 import org.apache.log4j.Logger
+
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 class HttpImposter {
 
@@ -28,10 +27,11 @@ class HttpImposter {
     ImposterRequestFactory requestReader = new ImposterRequestFactory()
     ResponseWriter responseWriter = new ResponseWriter()
 
-    private Map<ImposterRequest, ImposterResponse> map
+    private Map<ImposterRequest, ImposterResponse> map = [:]
+    private int unmatched
 
     HttpImposter() {
-        map = [:]
+        reset()
     }
 
     void setFilter(HttpHeaderFilter filter) {
@@ -47,6 +47,7 @@ class HttpImposter {
             logInteraction(imposterRequest, imposterResponse, true)
             responseWriter.write(imposterResponse, httpResponse)
         } else {
+            unmatched++
             logInteraction(imposterRequest, NO_MATCH, false)
             responseWriter.write(NO_MATCH, httpResponse)
         }
@@ -74,8 +75,13 @@ class HttpImposter {
         return map[imposterRequest]
     }
 
+    boolean hasUnmatched() {
+        return unmatched > 0
+    }
+
     void reset() {
         map.clear()
+        unmatched = 0
     }
 
     private void logInteraction(ImposterRequest imposterRequest, ImposterResponse imposterResponse, boolean matched) {

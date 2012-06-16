@@ -95,6 +95,7 @@ class HttpImposterSpec extends Specification {
         then:
             httpResponse.status == 234
             httpResponse.contentAsString == 'pear'
+            !httpImposter.hasUnmatched()
     }
     
     def 'respond when no match'() {
@@ -112,6 +113,7 @@ class HttpImposterSpec extends Specification {
             httpResponse.status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR
             httpResponse.getHeader('Content-Type') == 'text/plain'
             httpResponse.contentAsString == 'No match found for http request'
+            httpImposter.hasUnmatched()
     }
     
     def 'reset'() {
