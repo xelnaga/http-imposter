@@ -54,7 +54,7 @@ class HttpImposter {
     void verify(HttpServletResponse httpResponse) {
 
         List<Interaction> interactions = engine.verify()
-
+        responseWriter.write(interactions, httpResponse)
     }
 
     void reset() {
