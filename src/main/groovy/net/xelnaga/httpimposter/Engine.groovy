@@ -11,12 +11,12 @@ class Engine {
 
     private Map<RequestPattern, Interaction> interactions = [:]
 
-    void expect(RequestPattern requestPattern, ResponsePreset responsePreset) {
+    void expect(int cardinality, RequestPattern requestPattern, ResponsePreset responsePreset) {
 
         Interaction interaction = new Interaction(
                 requestPattern: requestPattern,
                 responsePreset: responsePreset,
-                expected: 1,
+                expected: cardinality,
                 actual: 0)
 
         interactions.put(requestPattern, interaction)
@@ -24,7 +24,10 @@ class Engine {
 
     ResponsePreset interact(RequestPattern requestPattern) {
 
+        println requestPattern.hashCode()
+
         Interaction interaction = interactions.get(requestPattern)
+        println interaction
         if (!interaction) {
             interaction = makeUnmatchedInteraction(requestPattern)
             interactions.put(requestPattern, interaction)
@@ -35,8 +38,9 @@ class Engine {
         return interaction.responsePreset
     }
 
-    boolean verify() {
-        return true
+    List<Interaction> verify() {
+        println interactions.size()
+        return interactions.values() as List
     }
 
     void reset() {

@@ -10,6 +10,7 @@ import net.xelnaga.httpimposter.model.ResponsePreset
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import net.xelnaga.httpimposter.model.Interaction
 
 class HttpImposter {
 
@@ -34,10 +35,11 @@ class HttpImposter {
 
         Map json = gson.fromJson(httpRequest.inputStream.text, HashMap)
 
+        int cardinality = json.cardinality
         RequestPattern requestPattern = requestPatternMarshaller.fromJson(json.requestPattern)
         ResponsePreset responsePreset = responsePresetMarshaller.fromJson(json.responsePreset)
 
-        engine.expect(requestPattern, responsePreset)
+        engine.expect(cardinality, requestPattern, responsePreset)
     }
 
     void interact(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
@@ -47,6 +49,12 @@ class HttpImposter {
 
         logWriter.interact(requestPattern, responsePreset)
         responseWriter.write(responsePreset, httpResponse)
+    }
+
+    void verify(HttpServletResponse httpResponse) {
+
+        List<Interaction> interactions = engine.verify()
+
     }
 
     void reset() {

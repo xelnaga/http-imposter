@@ -69,7 +69,7 @@ class HttpImposterSpec extends Specification {
         
         given:
             HttpServletRequest httpRequest = new MockHttpServletRequest()
-            httpRequest.content = new Gson().toJson([requestPattern: [qwerty: 'qwerty'], responsePreset: [asdfgh: 'asdfgh']]).bytes
+            httpRequest.content = new Gson().toJson([cardinality: 4, requestPattern: [qwerty: 'qwerty'], responsePreset: [asdfgh: 'asdfgh']]).bytes
 
             RequestPattern requestPattern = new RequestPattern(body: 'apple')
             ResponsePreset responsePreset = new ResponsePreset(body: 'pear')
@@ -80,7 +80,7 @@ class HttpImposterSpec extends Specification {
         then:
             (1) * mockRequestPatternMarshaller.fromJson([qwerty: 'qwerty']) >> requestPattern
             (1) * mockResponsePresetMarshaller.fromJson([asdfgh: 'asdfgh']) >> responsePreset
-            (1) * mockEngine.expect(requestPattern, responsePreset)
+            (1) * mockEngine.expect(4, requestPattern, responsePreset)
             (0) * _._
     }
 

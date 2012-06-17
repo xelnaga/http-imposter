@@ -1,10 +1,10 @@
 package net.xelnaga.httpimposter.factory
 
-import spock.lang.Specification
+import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ResponsePreset
+import spock.lang.Specification
 
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR
-import net.xelnaga.httpimposter.model.HttpHeader
 
 class ResponsePresetFactorySpec extends Specification {
 
@@ -26,17 +26,13 @@ class ResponsePresetFactorySpec extends Specification {
                             new HttpHeader('Content-Type', 'text/plain')
                     ],
                     body: """
-     _   _ _   _ _______  ______  _____ ____ _____ _____ ____
-    | | | | \\ | | ____\\ \\/ /  _ \\| ____/ ___|_   _| ____|  _ \\
-    | | | |  \\| |  _|  \\  /| |_) |  _|| |     | | |  _| | | | |
-    | |_| | |\\  | |___ /  \\|  __/| |__| |___  | | | |___| |_| |
-     \\___/|_| \\_|_____/_/\\_\\_|   |_____\\____| |_| |_____|____/
+    _   _ _   _ _______  ______  _____ ____ _____ _____ ____    ____  _____ ___  _   _ _____ ____ _____
+   | | | | \\ | | ____\\ \\/ /  _ \\| ____/ ___|_   _| ____|  _ \\  |  _ \\| ____/ _ \\| | | | ____/ ___|_   _|
+   | | | |  \\| |  _|  \\  /| |_) |  _|| |     | | |  _| | | | | | |_) |  _|| | | | | | |  _| \\___ \\ | |
+   | |_| | |\\  | |___ /  \\|  __/| |__| |___  | | | |___| |_| | |  _ <| |__| |_| | |_| | |___ ___) || |
+    \\___/|_| \\_|_____/_/\\_\\_|   |_____\\____| |_| |_____|____/  |_| \\_\\_____\\__\\_\\\\___/|_____|____/ |_|
 
-     _   _ _____ _____ ____       ____  _____ ___  _   _ _____ ____ _____
-    | | | |_   _|_   _|  _ \\     |  _ \\| ____/ _ \\| | | | ____/ ___|_   _|
-    | |_| | | |   | | | |_) |    | |_) |  _|| | | | | | |  _| \\___ \\ | |
-    |  _  | | |   | | |  __/     |  _ <| |__| |_| | |_| | |___ ___) || |
-    |_| |_| |_|   |_| |_|        |_| \\_\\_____\\__\\_\\\\___/|_____|____/ |_|
+   An unexpected request pattern has been received by http imposter
 
 """
             )

@@ -4,8 +4,12 @@ import javax.servlet.http.HttpServletResponse
 
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ResponsePreset
+import net.xelnaga.httpimposter.model.Interaction
+import com.google.gson.Gson
 
 class ResponseWriter {
+
+    Gson gson = new Gson()
 
     HttpServletResponse write(ResponsePreset responsePreset, HttpServletResponse httpResponse) {
 
@@ -16,6 +20,14 @@ class ResponseWriter {
         }
 
         httpResponse.outputStream << responsePreset.body
+
+        return httpResponse
+    }
+
+    HttpServletResponse write(List<Interaction> interactions, HttpServletResponse httpResponse) {
+
+        httpResponse.setContentType('application/json')
+        httpResponse.outputStream << gson.toJson(interactions)
 
         return httpResponse
     }

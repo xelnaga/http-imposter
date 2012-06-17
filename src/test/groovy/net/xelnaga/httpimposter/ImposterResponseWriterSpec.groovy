@@ -4,6 +4,8 @@ import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ResponsePreset
 import org.springframework.mock.web.MockHttpServletResponse
 import spock.lang.Specification
+import net.xelnaga.httpimposter.model.Interaction
+import javax.servlet.http.HttpServletResponse
 
 class ImposterResponseWriterSpec extends Specification {
 
@@ -13,7 +15,7 @@ class ImposterResponseWriterSpec extends Specification {
         writer = new ResponseWriter()
     }
     
-    def 'write'() {
+    def 'write response preset'() {
         
         given:
             ResponsePreset responsePreset = new ResponsePreset(
@@ -35,5 +37,20 @@ class ImposterResponseWriterSpec extends Specification {
             httpResponse.contentType == 'text/exciting'
             httpResponse.getHeader('Lemon') == 'Lime'
             httpResponse.contentAsString == 'qwertyuiop'
+    }
+
+    def 'write interactions'() {
+
+        given:
+            List<Interaction> interactions = [ new Interaction(expected: 2) ]
+            MockHttpServletResponse httpResponse = new MockHttpServletResponse()
+
+        when:
+            writer.write(interactions, httpResponse)
+
+        then:
+            httpResponse.status == HttpServletResponse.SC_OK
+            httpResponse.contentType == 'application/json'
+            httpResponse.contentAsString == '[{"expected":2}]'
     }
 }
