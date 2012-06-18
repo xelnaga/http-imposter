@@ -1,7 +1,7 @@
 package net.xelnaga.httpimposter.model
 
 import groovy.transform.EqualsAndHashCode
-import net.xelnaga.httpimposter.StringPrinter
+import net.xelnaga.httpimposter.printer.ResponsePresetPrinter
 
 @EqualsAndHashCode
 class ResponsePreset {
@@ -13,7 +13,7 @@ class ResponsePreset {
     @Override
     String toString() {
 
-        StringPrinter printer = new StringPrinter()
+        ResponsePresetPrinter printer = new ResponsePresetPrinter()
         return printer.print(this)
     }
 }

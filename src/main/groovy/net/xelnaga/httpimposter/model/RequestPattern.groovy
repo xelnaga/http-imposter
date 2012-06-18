@@ -1,7 +1,8 @@
 package net.xelnaga.httpimposter.model
 
 import groovy.transform.EqualsAndHashCode
-import net.xelnaga.httpimposter.StringPrinter
+
+import net.xelnaga.httpimposter.printer.RequestPatternPrinter
 
 @EqualsAndHashCode
 class RequestPattern {
@@ -14,7 +15,7 @@ class RequestPattern {
     @Override
     String toString() {
 
-        StringPrinter printer = new StringPrinter()
+        RequestPatternPrinter printer = new RequestPatternPrinter()
         return printer.print(this)
     }
 }

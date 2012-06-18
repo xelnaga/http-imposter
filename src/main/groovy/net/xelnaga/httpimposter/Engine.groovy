@@ -24,12 +24,9 @@ class Engine {
 
     ResponsePreset interact(RequestPattern requestPattern) {
 
-        println requestPattern.hashCode()
-
         Interaction interaction = interactions.get(requestPattern)
-        println interaction
         if (!interaction) {
-            interaction = makeUnmatchedInteraction(requestPattern)
+            interaction = makeUnExpectedInteraction(requestPattern)
             interactions.put(requestPattern, interaction)
         }
 
@@ -39,7 +36,6 @@ class Engine {
     }
 
     List<Interaction> verify() {
-        println interactions.size()
         return interactions.values() as List
     }
 
@@ -47,7 +43,7 @@ class Engine {
         interactions.clear()
     }
 
-    private Interaction makeUnmatchedInteraction(RequestPattern requestPattern) {
+    private Interaction makeUnExpectedInteraction(RequestPattern requestPattern) {
 
         return new Interaction(
                 requestPattern: requestPattern,
