@@ -37,10 +37,10 @@ class RequestPatternMarshallerSpec extends Specification {
             RequestPattern requestPattern = marshaller.fromJson(json)
 
         then:
-            (1) * mockHttpHeaderFilter.isMatchable(new HttpHeader('Content-Type', 'text/banana')) >> true
-            (1) * mockHttpHeaderFilter.isMatchable(new HttpHeader('Pineapple', 'Passionfruit')) >> true
-            (1) * mockHttpHeaderFilter.isMatchable(new HttpHeader('Durian', 'Stinky')) >> false
-            (0) * _._
+            1 * mockHttpHeaderFilter.isMatchable(new HttpHeader('Content-Type', 'text/banana')) >> true
+            1 * mockHttpHeaderFilter.isMatchable(new HttpHeader('Pineapple', 'Passionfruit')) >> true
+            1 * mockHttpHeaderFilter.isMatchable(new HttpHeader('Durian', 'Stinky')) >> false
+            0 * _._
 
         and:
             requestPattern == new RequestPattern(

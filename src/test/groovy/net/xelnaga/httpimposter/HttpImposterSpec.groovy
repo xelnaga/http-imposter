@@ -60,9 +60,9 @@ class HttpImposterSpec extends Specification {
             httpImposter.setFilter(filter)
 
         then:
-            (1) * mockRequestPatternFactory.setProperty('filter', filter)
-            (1) * mockRequestPatternMarshaller.setProperty('filter', filter)
-            (0) * _._
+            1 * mockRequestPatternFactory.setProperty('filter', filter)
+            1 * mockRequestPatternMarshaller.setProperty('filter', filter)
+            0 * _._
     }
 
     def 'expect'() {
@@ -78,10 +78,10 @@ class HttpImposterSpec extends Specification {
             httpImposter.expect(httpRequest)
 
         then:
-            (1) * mockRequestPatternMarshaller.fromJson([qwerty: 'qwerty']) >> requestPattern
-            (1) * mockResponsePresetMarshaller.fromJson([asdfgh: 'asdfgh']) >> responsePreset
-            (1) * mockEngine.expect(4, requestPattern, responsePreset)
-            (0) * _._
+            1 * mockRequestPatternMarshaller.fromJson([qwerty: 'qwerty']) >> requestPattern
+            1 * mockResponsePresetMarshaller.fromJson([asdfgh: 'asdfgh']) >> responsePreset
+            1 * mockEngine.expect(4, requestPattern, responsePreset)
+            0 * _._
     }
 
     def 'interact'() {
@@ -98,11 +98,11 @@ class HttpImposterSpec extends Specification {
             httpImposter.interact(httpRequest, httpResponse)
 
         then:
-            (1) * mockRequestPatternFactory.fromHttpRequest(httpRequest) >> requestPattern
-            (1) * mockEngine.interact(requestPattern) >> responsePreset
-            (1) * mockLogWriter.interact(requestPattern, responsePreset)
-            (1) * mockResponseWriter.write(responsePreset, httpResponse)
-            (0) *_._
+            1 * mockRequestPatternFactory.fromHttpRequest(httpRequest) >> requestPattern
+            1 * mockEngine.interact(requestPattern) >> responsePreset
+            1 * mockLogWriter.interact(requestPattern, responsePreset)
+            1 * mockResponseWriter.write(responsePreset, httpResponse)
+            0 *_._
     }
     
     def 'reset'() {
@@ -111,7 +111,7 @@ class HttpImposterSpec extends Specification {
             httpImposter.reset()
 
         then:
-            (1) * mockEngine.reset()
-            (0) * _._
+            1 * mockEngine.reset()
+            0 * _._
     }
 }

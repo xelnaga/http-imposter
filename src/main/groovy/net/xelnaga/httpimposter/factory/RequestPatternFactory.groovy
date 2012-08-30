@@ -13,8 +13,13 @@ class RequestPatternFactory {
 
     RequestPattern fromHttpRequest(HttpServletRequest httpRequest) {
 
+        String uri = httpRequest.requestURI
+        if (httpRequest.queryString) {
+            uri += "?${httpRequest.queryString}"
+        }
+
         RequestPattern requestPattern = new RequestPattern(
-                uri:    httpRequest.requestURI,
+                uri:    uri,
                 method: httpRequest.method,
                 body:   httpRequest.inputStream.text)
         
