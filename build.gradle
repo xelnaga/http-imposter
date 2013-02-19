@@ -28,12 +28,16 @@ dependencies {
             'commons-codec:commons-codec:1.6',
             'commons-lang:commons-lang:2.6'
 
-    testCompile 'org.spockframework:spock-core:0.6-groovy-1.8',
-                'org.springframework:spring-core:3.1.0.RELEASE',
-                'org.springframework:spring-test:3.1.0.RELEASE',
+    testCompile 'org.spockframework:spock-core:0.7-groovy-1.8',
+                'org.springframework:spring-core:3.1.4.RELEASE',
+                'org.springframework:spring-test:3.1.4.RELEASE',
                 'junit:junit:4.10',
                 'cglib:cglib-nodep:2.2.2',
                 'org.objenesis:objenesis:1.2'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.4'
 }
 
 uploadArchives {

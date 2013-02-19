@@ -1,13 +1,15 @@
 package net.xelnaga.httpimposter
 
 import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.Interaction
+import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
 import org.springframework.mock.web.MockHttpServletResponse
 import spock.lang.Specification
-import net.xelnaga.httpimposter.model.Interaction
-import javax.servlet.http.HttpServletResponse
 
-class ImposterResponseWriterSpec extends Specification {
+import static javax.servlet.http.HttpServletResponse.SC_OK
+
+class ResponseWriterSpec extends Specification {
 
     private ResponseWriter writer
     
@@ -42,15 +44,16 @@ class ImposterResponseWriterSpec extends Specification {
     def 'write interactions'() {
 
         given:
-            List<Interaction> interactions = [ new Interaction(expected: 2) ]
+            List<RequestPattern> interactions = [ new RequestPattern(body: 'hello'), new RequestPattern(body: 'world') ]
+            List<Interaction> expectations = [ new Interaction(expected: 3), new Interaction(expected: 2) ]
             MockHttpServletResponse httpResponse = new MockHttpServletResponse()
 
         when:
-            writer.write(interactions, httpResponse)
+            writer.write(interactions, expectations, httpResponse)
 
         then:
-            httpResponse.status == HttpServletResponse.SC_OK
+            httpResponse.status == SC_OK
             httpResponse.contentType == 'application/json'
-            httpResponse.contentAsString == '[{"expected":2}]'
+            httpResponse.contentAsString == '{"expectations":[{"expected":3},{"expected":2}],"interactions":[{"headers":[],"body":"hello"},{"headers":[],"body":"world"}]}'
     }
 }

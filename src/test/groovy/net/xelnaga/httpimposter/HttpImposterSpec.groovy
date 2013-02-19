@@ -6,6 +6,7 @@ import net.xelnaga.httpimposter.filter.HeaderNameExclusionFilter
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.marshaller.RequestPatternMarshaller
 import net.xelnaga.httpimposter.marshaller.ResponsePresetMarshaller
+import net.xelnaga.httpimposter.model.Interaction
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
 import org.springframework.mock.web.MockHttpServletRequest
@@ -104,7 +105,26 @@ class HttpImposterSpec extends Specification {
             1 * mockResponseWriter.write(responsePreset, httpResponse)
             0 *_._
     }
-    
+
+    def 'verify'() {
+
+        given:
+            HttpServletResponse response = new MockHttpServletResponse()
+            List<RequestPattern> interactions = [ Mock(RequestPattern) ]
+            List<Interaction> expecations = [ Mock(Interaction) ]
+
+        when:
+            httpImposter.verify(response)
+
+        then:
+            1 * mockEngine.getInteractions() >> interactions
+        then:
+            1 * mockEngine.getExpectations() >> expecations
+        then:
+            1 * mockResponseWriter.write(interactions, expecations, response)
+            0 * _._
+    }
+
     def 'reset'() {
 
         when:

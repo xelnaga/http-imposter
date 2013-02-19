@@ -1,5 +1,8 @@
 package net.xelnaga.httpimposter
 
+import net.xelnaga.httpimposter.transport.Report
+import net.xelnaga.httpimposter.model.RequestPattern
+
 import javax.servlet.http.HttpServletResponse
 
 import net.xelnaga.httpimposter.model.HttpHeader
@@ -24,10 +27,15 @@ class ResponseWriter {
         return httpResponse
     }
 
-    HttpServletResponse write(List<Interaction> interactions, HttpServletResponse httpResponse) {
+    HttpServletResponse write(List<RequestPattern> interactions, List<Interaction> expectations, HttpServletResponse httpResponse) {
+
+        Report report = new Report(
+                expectations: expectations,
+                interactions: interactions,
+        )
 
         httpResponse.setContentType('application/json')
-        httpResponse.outputStream << gson.toJson(interactions)
+        httpResponse.outputStream << gson.toJson(report)
 
         return httpResponse
     }

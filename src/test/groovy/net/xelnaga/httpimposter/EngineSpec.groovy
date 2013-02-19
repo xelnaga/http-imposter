@@ -1,10 +1,10 @@
 package net.xelnaga.httpimposter
 
-import spock.lang.Specification
-import net.xelnaga.httpimposter.model.RequestPattern
-import net.xelnaga.httpimposter.model.ResponsePreset
 import net.xelnaga.httpimposter.factory.ResponsePresetFactory
 import net.xelnaga.httpimposter.model.Interaction
+import net.xelnaga.httpimposter.model.RequestPattern
+import net.xelnaga.httpimposter.model.ResponsePreset
+import spock.lang.Specification
 
 class EngineSpec extends Specification {
 
@@ -26,29 +26,53 @@ class EngineSpec extends Specification {
             ResponsePreset responsePreset3 = new ResponsePresetFactory().makeUnexpected()
 
         expect:
-            engine.verify() == []
+            engine.expectations == []
+            engine.interactions == []
 
         when:
             engine.expect(3, requestPattern1, responsePreset1)
             engine.expect(2, requestPattern2, responsePreset2)
 
         then:
-            engine.verify() == [
+            engine.expectations == [
                 new Interaction(requestPattern: requestPattern1, responsePreset: responsePreset1, expected: 3, actual: 0),
                 new Interaction(requestPattern: requestPattern2, responsePreset: responsePreset2, expected: 2, actual: 0),
             ]
-
-        and:
-            engine.interact(requestPattern1) == responsePreset1
-            engine.interact(requestPattern3) == responsePreset3
-            engine.interact(requestPattern2) == responsePreset2
-            engine.interact(requestPattern1) == responsePreset1
+            engine.interactions == []
 
         when:
-            List<Interaction> interactions = engine.verify()
+            ResponsePreset result1 = engine.interact(requestPattern1)
 
         then:
-            interactions == [
+            result1 == responsePreset1
+            engine.interactions == [ requestPattern1 ]
+
+        when:
+            ResponsePreset result2 = engine.interact(requestPattern3)
+
+        then:
+            result2 == responsePreset3
+            engine.interactions == [ requestPattern1, requestPattern3 ]
+
+        when:
+            ResponsePreset result3 = engine.interact(requestPattern2)
+
+        then:
+            result3 == responsePreset2
+            engine.interactions == [ requestPattern1, requestPattern3, requestPattern2 ]
+
+        when:
+            ResponsePreset result4 = engine.interact(requestPattern1)
+
+        then:
+            result4 == responsePreset1
+            engine.interactions == [ requestPattern1, requestPattern3, requestPattern2, requestPattern1 ]
+
+        when:
+            List<Interaction> expectations = engine.expectations
+
+        then:
+            expectations == [
                     new Interaction(requestPattern: requestPattern1, responsePreset: responsePreset1, expected: 3, actual: 2),
                     new Interaction(requestPattern: requestPattern2, responsePreset: responsePreset2, expected: 2, actual: 1),
                     new Interaction(requestPattern: requestPattern3, responsePreset: responsePreset3, expected: 0, actual: 1)
@@ -58,6 +82,7 @@ class EngineSpec extends Specification {
             engine.reset()
 
         then:
-            engine.verify() == []
+            engine.expectations == []
+            engine.interactions == []
     }
 }

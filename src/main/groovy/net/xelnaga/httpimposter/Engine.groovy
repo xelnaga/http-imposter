@@ -9,25 +9,36 @@ class Engine {
 
     private static final ResponsePreset UNEXPECTED = new ResponsePresetFactory().makeUnexpected()
 
-    private Map<RequestPattern, Interaction> interactions = [:]
+    private Map<RequestPattern, Interaction> expectations = [:]
+    private List<RequestPattern> interactions = []
 
-    void expect(int cardinality, RequestPattern requestPattern, ResponsePreset responsePreset) {
+    List<Interaction> getExpectations() {
+        return expectations.values() as List
+    }
+
+    List<RequestPattern> getInteractions() {
+        return interactions
+    }
+
+    void expect(int cardinality, RequestPattern pattern, ResponsePreset preset) {
 
         Interaction interaction = new Interaction(
-                requestPattern: requestPattern,
-                responsePreset: responsePreset,
+                requestPattern: pattern,
+                responsePreset: preset,
                 expected: cardinality,
                 actual: 0)
 
-        interactions.put(requestPattern, interaction)
+        expectations.put(pattern, interaction)
     }
 
-    ResponsePreset interact(RequestPattern requestPattern) {
+    ResponsePreset interact(RequestPattern pattern) {
 
-        Interaction interaction = interactions.get(requestPattern)
+        interactions << pattern
+
+        Interaction interaction = expectations.get(pattern)
         if (!interaction) {
-            interaction = makeUnExpectedInteraction(requestPattern)
-            interactions.put(requestPattern, interaction)
+            interaction = makeUnexpectedInteraction(pattern)
+            expectations.put(pattern, interaction)
         }
 
         interaction.actual++
@@ -35,15 +46,13 @@ class Engine {
         return interaction.responsePreset
     }
 
-    List<Interaction> verify() {
-        return interactions.values() as List
-    }
-
     void reset() {
+
+        expectations.clear()
         interactions.clear()
     }
 
-    private Interaction makeUnExpectedInteraction(RequestPattern requestPattern) {
+    private Interaction makeUnexpectedInteraction(RequestPattern requestPattern) {
 
         return new Interaction(
                 requestPattern: requestPattern,
