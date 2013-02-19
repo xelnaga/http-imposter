@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     
-    groovy 'org.codehaus.groovy:groovy-all:1.8.6'
+    groovy 'org.codehaus.groovy:groovy-all:1.8.8'
 
     compile 'javax.servlet:servlet-api:2.5',
             'log4j:log4j:1.2.16',

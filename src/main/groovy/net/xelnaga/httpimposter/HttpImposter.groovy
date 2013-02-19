@@ -5,9 +5,9 @@ import net.xelnaga.httpimposter.factory.RequestPatternFactory
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.marshaller.RequestPatternMarshaller
 import net.xelnaga.httpimposter.marshaller.ResponsePresetMarshaller
-import net.xelnaga.httpimposter.model.Interaction
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
+import net.xelnaga.httpimposter.transport.Report
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -51,12 +51,11 @@ class HttpImposter {
         responseWriter.write(responsePreset, httpResponse)
     }
 
-    void verify(HttpServletResponse httpResponse) {
+    void report(HttpServletResponse response) {
 
-        List<RequestPattern> interactions = engine.getInteractions()
-        List<Interaction> expectations = engine.getExpectations()
+        Report report = engine.report
 
-        responseWriter.write(interactions, expectations, httpResponse)
+        responseWriter.write(report, response)
     }
 
     void reset() {

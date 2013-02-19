@@ -1,18 +1,16 @@
 package net.xelnaga.httpimposter
 
+import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.ResponsePreset
+import net.xelnaga.httpimposter.serialiser.JsonReportSerializer
+import net.xelnaga.httpimposter.serialiser.ReportSerializer
 import net.xelnaga.httpimposter.transport.Report
-import net.xelnaga.httpimposter.model.RequestPattern
 
 import javax.servlet.http.HttpServletResponse
 
-import net.xelnaga.httpimposter.model.HttpHeader
-import net.xelnaga.httpimposter.model.ResponsePreset
-import net.xelnaga.httpimposter.model.Interaction
-import com.google.gson.Gson
-
 class ResponseWriter {
 
-    Gson gson = new Gson()
+    ReportSerializer reportSerializer = new JsonReportSerializer()
 
     HttpServletResponse write(ResponsePreset responsePreset, HttpServletResponse httpResponse) {
 
@@ -27,16 +25,11 @@ class ResponseWriter {
         return httpResponse
     }
 
-    HttpServletResponse write(List<RequestPattern> interactions, List<Interaction> expectations, HttpServletResponse httpResponse) {
+    HttpServletResponse write(Report report, HttpServletResponse response) {
 
-        Report report = new Report(
-                expectations: expectations,
-                interactions: interactions,
-        )
+        response.setContentType('application/json')
+        response.outputStream << reportSerializer.serialize(report)
 
-        httpResponse.setContentType('application/json')
-        httpResponse.outputStream << gson.toJson(report)
-
-        return httpResponse
+        return response
     }
 }

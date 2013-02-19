@@ -1,9 +1,9 @@
 package net.xelnaga.httpimposter
 
 import net.xelnaga.httpimposter.model.HttpHeader
-import net.xelnaga.httpimposter.model.Interaction
-import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
+import net.xelnaga.httpimposter.serialiser.ReportSerializer
+import net.xelnaga.httpimposter.transport.Report
 import org.springframework.mock.web.MockHttpServletResponse
 import spock.lang.Specification
 
@@ -11,10 +11,16 @@ import static javax.servlet.http.HttpServletResponse.SC_OK
 
 class ResponseWriterSpec extends Specification {
 
-    private ResponseWriter writer
-    
+    ResponseWriter writer
+
+    ReportSerializer mockReportSerializer
+
     void setup() {
+
         writer = new ResponseWriter()
+
+        mockReportSerializer = Mock(ReportSerializer)
+        writer.reportSerializer = mockReportSerializer
     }
     
     def 'write response preset'() {
@@ -41,19 +47,22 @@ class ResponseWriterSpec extends Specification {
             httpResponse.contentAsString == 'qwertyuiop'
     }
 
-    def 'write interactions'() {
+    def 'write report'() {
 
         given:
-            List<RequestPattern> interactions = [ new RequestPattern(body: 'hello'), new RequestPattern(body: 'world') ]
-            List<Interaction> expectations = [ new Interaction(expected: 3), new Interaction(expected: 2) ]
-            MockHttpServletResponse httpResponse = new MockHttpServletResponse()
+            Report mockReport = Mock(Report)
+            MockHttpServletResponse mockResponse = new MockHttpServletResponse()
 
         when:
-            writer.write(interactions, expectations, httpResponse)
+            writer.write(mockReport, mockResponse)
 
         then:
-            httpResponse.status == SC_OK
-            httpResponse.contentType == 'application/json'
-            httpResponse.contentAsString == '{"expectations":[{"expected":3},{"expected":2}],"interactions":[{"headers":[],"body":"hello"},{"headers":[],"body":"world"}]}'
+            1 * mockReportSerializer.serialize(mockReport) >> 'abcdef'
+            0 * _._
+
+        and:
+            mockResponse.status == SC_OK
+            mockResponse.contentType == 'application/json'
+            mockResponse.contentAsString == 'abcdef'
     }
 }

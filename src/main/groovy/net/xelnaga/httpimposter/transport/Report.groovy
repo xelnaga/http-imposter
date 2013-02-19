@@ -9,6 +9,8 @@ import net.xelnaga.httpimposter.model.RequestPattern
 @ToString
 class Report {
 
-    List<Interaction> expectations
+    List<RequestPattern> expectations
     List<RequestPattern> interactions
+
+    List<Interaction> legacy
 }
