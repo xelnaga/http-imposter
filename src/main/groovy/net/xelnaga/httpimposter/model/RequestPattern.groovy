@@ -7,8 +7,8 @@ import net.xelnaga.httpimposter.printer.RequestPatternPrinter
 @EqualsAndHashCode
 class RequestPattern {
 
-    String uri
     String method
+    String uri
     Set<HttpHeader> headers = [] as TreeSet
     String body
 
