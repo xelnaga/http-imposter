@@ -1,7 +1,6 @@
 package net.xelnaga.httpimposter
 
 import net.xelnaga.httpimposter.factory.ResponsePresetFactory
-import net.xelnaga.httpimposter.model.Interaction
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
 import net.xelnaga.httpimposter.transport.Report
@@ -29,8 +28,7 @@ class EngineSpec extends Specification {
         expect:
             engine.report == new Report(
                 expectations: [],
-                interactions: [],
-                legacy: []
+                interactions: []
             )
 
         when:
@@ -48,12 +46,7 @@ class EngineSpec extends Specification {
                     ],
                     interactions: [
 
-                    ],
-                    legacy: [
-                            new Interaction(requestPattern: requestPattern1, responsePreset: responsePreset1, expected: 3, actual: 0),
-                            new Interaction(requestPattern: requestPattern2, responsePreset: responsePreset2, expected: 2, actual: 0),
                     ]
-
             )
 
         when:
@@ -98,11 +91,7 @@ class EngineSpec extends Specification {
                             requestPattern2,
                             requestPattern1
                     ],
-                    legacy: [
-                            new Interaction(requestPattern: requestPattern1, responsePreset: responsePreset1, expected: 3, actual: 2),
-                            new Interaction(requestPattern: requestPattern2, responsePreset: responsePreset2, expected: 2, actual: 1),
-                            new Interaction(requestPattern: requestPattern3, responsePreset: responsePreset3, expected: 0, actual: 1),
-                    ]
+
 
             )
 
@@ -112,8 +101,7 @@ class EngineSpec extends Specification {
         then:
             engine.report == new Report(
                     expectations: [],
-                    interactions: [],
-                    legacy: []
+                    interactions: []
             )
     }
 }

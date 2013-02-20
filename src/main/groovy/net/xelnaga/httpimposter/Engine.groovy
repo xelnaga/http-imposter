@@ -1,57 +1,41 @@
 package net.xelnaga.httpimposter
 
 import net.xelnaga.httpimposter.factory.ResponsePresetFactory
-import net.xelnaga.httpimposter.model.ResponsePreset
 import net.xelnaga.httpimposter.model.RequestPattern
-import net.xelnaga.httpimposter.model.Interaction
+import net.xelnaga.httpimposter.model.ResponsePreset
 import net.xelnaga.httpimposter.transport.Report
 
 class Engine {
 
     private static final ResponsePreset UNEXPECTED = new ResponsePresetFactory().makeUnexpected()
 
-    private Map<RequestPattern, Interaction> responses = [:]
-
     private List<RequestPattern> expectations = []
     private List<RequestPattern> interactions = []
+
+    private Map<RequestPattern, ResponsePreset> responses = [:]
 
     Report getReport() {
 
         return new Report(
                 expectations: expectations,
-                interactions: interactions,
-                legacy: responses.values() as List,
+                interactions: interactions
         )
     }
 
-    void expect(int cardinality, RequestPattern pattern, ResponsePreset preset) {
+    void expect(int cardinality, RequestPattern request, ResponsePreset response) {
 
         cardinality.times {
-            expectations << pattern
+            expectations << request
         }
 
-        Interaction interaction = new Interaction(
-                requestPattern: pattern,
-                responsePreset: preset,
-                expected: cardinality,
-                actual: 0)
-
-        responses.put(pattern, interaction)
+        responses.put(request, response)
     }
 
-    ResponsePreset interact(RequestPattern pattern) {
+    ResponsePreset interact(RequestPattern request) {
 
-        interactions << pattern
+        interactions << request
 
-        Interaction interaction = responses.get(pattern)
-        if (!interaction) {
-            interaction = makeUnexpectedInteraction(pattern)
-            responses.put(pattern, interaction)
-        }
-
-        interaction.actual++
-
-        return interaction.responsePreset
+        return responses.get(request, UNEXPECTED)
     }
 
     void reset() {
@@ -60,14 +44,5 @@ class Engine {
         interactions.clear()
 
         responses.clear()
-    }
-
-    private Interaction makeUnexpectedInteraction(RequestPattern requestPattern) {
-
-        return new Interaction(
-                requestPattern: requestPattern,
-                responsePreset: UNEXPECTED,
-                expected: 0,
-                actual: 0)
     }
 }

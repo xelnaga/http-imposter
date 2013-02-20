@@ -1,7 +1,6 @@
 package net.xelnaga.httpimposter.serializer
 
 import net.xelnaga.httpimposter.model.HttpHeader
-import net.xelnaga.httpimposter.model.Interaction
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.serialiser.JsonReportSerializer
 import net.xelnaga.httpimposter.transport.Report
@@ -53,16 +52,10 @@ class JsonReportSerializerSpec extends Specification {
                                 ],
                                 body: 'somebody4'
                         )
-                ],
-                legacy: [
-                        new Interaction(
-                                expected: 3,
-                                actual: 5
-                        )
                 ]
         )
 
-        serial = '''{"expectations":[{"method":"somemethod1","uri":"/someuri1","headers":[{"name":"headername1","value":"headervalue1"}],"body":"somebody1"},{"method":"somemethod2","uri":"/someuri2","headers":[{"name":"headername2","value":"headervalue2"}],"body":"somebody2"}],"interactions":[{"method":"somemethod3","uri":"/someuri3","headers":[{"name":"headername3","value":"headervalue3"}],"body":"somebody3"},{"method":"somemethod4","uri":"/someuri4","headers":[{"name":"headername4","value":"headervalue4"}],"body":"somebody4"}],"legacy":[{"expected":3,"actual":5}]}'''
+        serial = '''{"expectations":[{"method":"somemethod1","uri":"/someuri1","headers":[{"name":"headername1","value":"headervalue1"}],"body":"somebody1"},{"method":"somemethod2","uri":"/someuri2","headers":[{"name":"headername2","value":"headervalue2"}],"body":"somebody2"}],"interactions":[{"method":"somemethod3","uri":"/someuri3","headers":[{"name":"headername3","value":"headervalue3"}],"body":"somebody3"},{"method":"somemethod4","uri":"/someuri4","headers":[{"name":"headername4","value":"headervalue4"}],"body":"somebody4"}]}'''
     }
 
     def 'serialize'() {
