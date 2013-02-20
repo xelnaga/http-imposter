@@ -7,11 +7,7 @@ class HeaderNameExclusionFilter implements HttpHeaderFilter {
     private Set<String> exclusions
 
     HeaderNameExclusionFilter(List<String> exclusions) {
-        this.exclusions = exclusions.collect { it.toLowerCase() }
-    }
-
-    Set<String> getExclusions() {
-        return exclusions.asImmutable()
+        this.exclusions = exclusions.collect { it.toLowerCase() } as TreeSet
     }
 
     @Override

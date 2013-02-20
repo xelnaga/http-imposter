@@ -11,32 +11,32 @@ class RequestPatternFactory {
 
     HttpHeaderFilter filter = new PassThroughFilter()
 
-    RequestPattern fromHttpRequest(HttpServletRequest httpRequest) {
+    RequestPattern fromHttpRequest(HttpServletRequest request) {
 
-        String uri = httpRequest.requestURI
-        if (httpRequest.queryString) {
-            uri += "?${httpRequest.queryString}"
+        String uri = request.requestURI
+        if (request.queryString) {
+            uri += "?${request.queryString}"
         }
 
-        RequestPattern requestPattern = new RequestPattern(
+        RequestPattern pattern = new RequestPattern(
                 uri:    uri,
-                method: httpRequest.method,
-                body:   httpRequest.inputStream.text)
+                method: request.method,
+                body:   request.inputStream.text)
         
-        httpRequest.headerNames.each { String name ->
+        request.headerNames.each { String name ->
 
-            String value = httpRequest.getHeader(name)
+            String value = request.getHeader(name)
             HttpHeader httpHeader = new HttpHeader(name, value)
-            addMatchableHeader(requestPattern, httpHeader)
+            addMatchableHeader(pattern, httpHeader)
         }
         
-        return requestPattern
+        return pattern
     }
 
-    private void addMatchableHeader(RequestPattern requestPattern, HttpHeader httpHeader) {
+    private void addMatchableHeader(RequestPattern pattern, HttpHeader header) {
 
-        if (filter.isMatchable(httpHeader)) {
-            requestPattern.headers << httpHeader
+        if (filter.isMatchable(header)) {
+            pattern.headers << header
         }
     }
 }
