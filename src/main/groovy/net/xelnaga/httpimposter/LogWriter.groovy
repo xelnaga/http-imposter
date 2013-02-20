@@ -1,23 +1,27 @@
 package net.xelnaga.httpimposter
 
-import net.xelnaga.httpimposter.model.RequestPattern
-import net.xelnaga.httpimposter.model.ResponsePreset
+import net.xelnaga.httpimposter.model.Interaction
+import net.xelnaga.httpimposter.printer.RequestPatternPrinter
+import net.xelnaga.httpimposter.printer.ResponsePresetPrinter
 import org.apache.log4j.Logger
 
 class LogWriter {
 
     Logger log = Logger.getLogger(LogWriter)
 
-    void interact(RequestPattern requestPattern, ResponsePreset responsePreset) {
+    RequestPatternPrinter requestPatternPrinter
+    ResponsePresetPrinter responsePresetPrinter
+
+    void interact(Interaction interaction) {
 
         log.info '\n>> [Http Imposter]: Received request pattern'
         log.info '>> ==========================================='
-        log.info requestPattern.toString()
+        log.info requestPatternPrinter.print(interaction.request)
         log.info '>>'
 
         log.info '\n>> [Http Imposter]: Sending response preset'
         log.info '>> ==========================================='
-        log.info responsePreset.toString()
+        log.info responsePresetPrinter.print(interaction.response)
         log.info '>>'
     }
 }

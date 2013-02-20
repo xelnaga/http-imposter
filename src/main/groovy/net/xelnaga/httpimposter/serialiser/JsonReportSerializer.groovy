@@ -1,7 +1,7 @@
 package net.xelnaga.httpimposter.serialiser
 
 import com.google.gson.Gson
-import net.xelnaga.httpimposter.transport.Report
+import net.xelnaga.httpimposter.model.Report
 
 class JsonReportSerializer implements ReportSerializer {
 

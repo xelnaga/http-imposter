@@ -6,9 +6,10 @@ import net.xelnaga.httpimposter.filter.HeaderNameExclusionFilter
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.marshaller.RequestPatternMarshaller
 import net.xelnaga.httpimposter.marshaller.ResponsePresetMarshaller
+import net.xelnaga.httpimposter.model.Interaction
+import net.xelnaga.httpimposter.model.Report
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
-import net.xelnaga.httpimposter.transport.Report
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import spock.lang.Specification
@@ -75,14 +76,17 @@ class HttpImposterSpec extends Specification {
 
             RequestPattern requestPattern = new RequestPattern(body: 'apple')
             ResponsePreset responsePreset = new ResponsePreset(body: 'pear')
+            Interaction interaction = new Interaction(requestPattern, responsePreset)
 
         when:
             httpImposter.expect(httpRequest)
 
         then:
             1 * mockRequestPatternMarshaller.fromJson([qwerty: 'qwerty']) >> requestPattern
+        then:
             1 * mockResponsePresetMarshaller.fromJson([asdfgh: 'asdfgh']) >> responsePreset
-            1 * mockEngine.expect(4, requestPattern, responsePreset)
+        then:
+            1 * mockEngine.expect(4, interaction)
             0 * _._
     }
 
@@ -94,15 +98,18 @@ class HttpImposterSpec extends Specification {
 
             RequestPattern requestPattern = new RequestPattern(body: 'hello')
             ResponsePreset responsePreset = new ResponsePreset(status: 234, body: 'pear')
-        
+            Interaction interaction = new Interaction(requestPattern, responsePreset)
 
         when:
             httpImposter.interact(httpRequest, httpResponse)
 
         then:
             1 * mockRequestPatternFactory.fromHttpRequest(httpRequest) >> requestPattern
-            1 * mockEngine.interact(requestPattern) >> responsePreset
-            1 * mockLogWriter.interact(requestPattern, responsePreset)
+        then:
+            1 * mockEngine.interact(requestPattern) >> interaction
+        then:
+            1 * mockLogWriter.interact(interaction)
+        then:
             1 * mockResponseWriter.write(responsePreset, httpResponse)
             0 *_._
     }

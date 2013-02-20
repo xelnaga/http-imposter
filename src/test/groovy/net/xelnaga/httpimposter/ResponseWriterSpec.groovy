@@ -3,7 +3,7 @@ package net.xelnaga.httpimposter
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ResponsePreset
 import net.xelnaga.httpimposter.serialiser.ReportSerializer
-import net.xelnaga.httpimposter.transport.Report
+import net.xelnaga.httpimposter.model.Report
 import org.springframework.mock.web.MockHttpServletResponse
 import spock.lang.Specification
 

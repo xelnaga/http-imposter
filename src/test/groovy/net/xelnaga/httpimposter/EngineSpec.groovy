@@ -1,107 +1,112 @@
 package net.xelnaga.httpimposter
 
-import net.xelnaga.httpimposter.factory.ResponsePresetFactory
+import net.xelnaga.httpimposter.model.Interaction
+import net.xelnaga.httpimposter.model.Report
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
-import net.xelnaga.httpimposter.transport.Report
 import spock.lang.Specification
 
 class EngineSpec extends Specification {
 
     Engine engine
 
+    SpecificationHelper helper
+
+    ResponseProvider mockResponseProvider
+
     void setup() {
+
         engine = new Engine()
+
+        helper = new SpecificationHelper()
+
+        mockResponseProvider = Mock(ResponseProvider)
+        engine.responseProvider = mockResponseProvider
     }
 
-    def 'expect, interact, verify and reset after multiple expected and unexpected interactions'() {
+    def 'expect'() {
 
         given:
-            RequestPattern requestPattern1 = new RequestPattern(body: 'qwerty')
-            RequestPattern requestPattern2 = new RequestPattern(body: 'mmndfd')
-            RequestPattern requestPattern3 = new RequestPattern(body: 'erwrwr')
-
-            ResponsePreset responsePreset1 = new ResponsePreset(body: 'asdfgh')
-            ResponsePreset responsePreset2 = new ResponsePreset(body: 'gshshs')
-            ResponsePreset responsePreset3 = new ResponsePresetFactory().makeUnexpected()
-
-        expect:
-            engine.report == new Report(
-                expectations: [],
-                interactions: []
-            )
+            Interaction expectation = helper.makeInteraction(1)
 
         when:
-            engine.expect(3, requestPattern1, responsePreset1)
-            engine.expect(2, requestPattern2, responsePreset2)
+            engine.expect(1, expectation)
 
         then:
-            engine.report == new Report(
-                    expectations: [
-                            requestPattern1,
-                            requestPattern1,
-                            requestPattern1,
-                            requestPattern2,
-                            requestPattern2
-                    ],
-                    interactions: [
-
-                    ]
-            )
-
-        when:
-            ResponsePreset result1 = engine.interact(requestPattern1)
-
-        then:
-            result1 == responsePreset1
-
-        when:
-            ResponsePreset result2 = engine.interact(requestPattern3)
-
-        then:
-            result2 == responsePreset3
-
-        when:
-            ResponsePreset result3 = engine.interact(requestPattern2)
-
-        then:
-            result3 == responsePreset2
-
-        when:
-            ResponsePreset result4 = engine.interact(requestPattern1)
-
-        then:
-            result4 == responsePreset1
+            1 * mockResponseProvider.add(expectation)
+            0 * _._
 
         and:
+            engine.report == new Report([expectation], [])
+    }
 
+    def 'expect with cardinality'() {
+
+        given:
+            Interaction expectation1 = helper.makeInteraction(1)
+
+        when:
+            engine.expect(3, expectation1)
 
         then:
-            engine.report == new Report(
-                    expectations: [
-                            requestPattern1,
-                            requestPattern1,
-                            requestPattern1,
-                            requestPattern2,
-                            requestPattern2
-                    ],
-                    interactions: [
-                            requestPattern1,
-                            requestPattern3,
-                            requestPattern2,
-                            requestPattern1
-                    ],
+            1 * mockResponseProvider.add(expectation1)
+        then:
+            1 * mockResponseProvider.add(expectation1)
+        then:
+            1 * mockResponseProvider.add(expectation1)
+            0 * _._
 
+        and:
+            engine.report == new Report([expectation1, expectation1, expectation1], [])
+    }
 
-            )
+    def 'interact'() {
+
+        given:
+            RequestPattern request = helper.makeRequestPattern(1)
+            ResponsePreset response = helper.makeResponsePreset(1)
+            Interaction interaction = helper.makeInteraction(1)
+
+        when:
+            Interaction result = engine.interact(request)
+
+        then:
+            1 * mockResponseProvider.get(request) >> response
+            0 * _._
+
+        and:
+            result == new Interaction(request, response)
+
+        and:
+            engine.report == new Report([], [interaction])
+    }
+
+    def 'reset'() {
+
+        given:
+            Interaction interaction = helper.makeInteraction(1)
+
+        when:
+            engine.expect(1, interaction)
+            engine.interact(interaction.request)
+
+        then:
+            1 * mockResponseProvider.add(interaction)
+        then:
+            1 * mockResponseProvider.get(interaction.request) >> interaction.response
+            0 * _._
+
+        then:
+            engine.report == new Report([interaction],[interaction])
 
         when:
             engine.reset()
 
         then:
-            engine.report == new Report(
-                    expectations: [],
-                    interactions: []
-            )
+            1 * mockResponseProvider.reset()
+            0 * _._
+
+        and:
+            engine.report == new Report([],[])
     }
 }

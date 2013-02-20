@@ -1,41 +1,45 @@
 package net.xelnaga.httpimposter
 
-import net.xelnaga.httpimposter.factory.ResponsePresetFactory
+import net.xelnaga.httpimposter.model.Interaction
+import net.xelnaga.httpimposter.model.Report
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
-import net.xelnaga.httpimposter.transport.Report
 
 class Engine {
 
-    private static final ResponsePreset UNEXPECTED = new ResponsePresetFactory().makeUnexpected()
+    private List<Interaction> expectations
+    private List<Interaction> interactions
 
-    private List<RequestPattern> expectations = []
-    private List<RequestPattern> interactions = []
+    ResponseProvider responseProvider
 
-    private Map<RequestPattern, ResponsePreset> responses = [:]
+    Engine() {
+
+        expectations = []
+        interactions = []
+
+        responseProvider = new MappedResponseProvider()
+    }
 
     Report getReport() {
-
-        return new Report(
-                expectations: expectations,
-                interactions: interactions
-        )
+        return new Report(expectations, interactions)
     }
 
-    void expect(int cardinality, RequestPattern request, ResponsePreset response) {
+    void expect(int cardinality, Interaction expectation) {
 
         cardinality.times {
-            expectations << request
+            expectations << expectation
+            responseProvider.add(expectation)
         }
-
-        responses.put(request, response)
     }
 
-    ResponsePreset interact(RequestPattern request) {
+    Interaction interact(RequestPattern request) {
 
-        interactions << request
+        ResponsePreset response = responseProvider.get(request)
 
-        return responses.get(request, UNEXPECTED)
+        Interaction interaction = new Interaction(request, response)
+        interactions << interaction
+
+        return interaction
     }
 
     void reset() {
@@ -43,6 +47,6 @@ class Engine {
         expectations.clear()
         interactions.clear()
 
-        responses.clear()
+        responseProvider.reset()
     }
 }

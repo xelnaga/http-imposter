@@ -5,9 +5,10 @@ import net.xelnaga.httpimposter.factory.RequestPatternFactory
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.marshaller.RequestPatternMarshaller
 import net.xelnaga.httpimposter.marshaller.ResponsePresetMarshaller
+import net.xelnaga.httpimposter.model.Interaction
+import net.xelnaga.httpimposter.model.Report
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
-import net.xelnaga.httpimposter.transport.Report
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -36,19 +37,21 @@ class HttpImposter {
         Map json = gson.fromJson(httpRequest.inputStream.text, HashMap)
 
         int cardinality = json.cardinality
+
         RequestPattern requestPattern = requestPatternMarshaller.fromJson(json.requestPattern)
         ResponsePreset responsePreset = responsePresetMarshaller.fromJson(json.responsePreset)
+        Interaction interaction = new Interaction(requestPattern, responsePreset)
 
-        engine.expect(cardinality, requestPattern, responsePreset)
+        engine.expect(cardinality, interaction)
     }
 
     void interact(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
         RequestPattern requestPattern = requestPatternFactory.fromHttpRequest(httpRequest)
-        ResponsePreset responsePreset = engine.interact(requestPattern)
+        Interaction interaction = engine.interact(requestPattern)
 
-        logWriter.interact(requestPattern, responsePreset)
-        responseWriter.write(responsePreset, httpResponse)
+        logWriter.interact(interaction)
+        responseWriter.write(interaction.response, httpResponse)
     }
 
     void report(HttpServletResponse response) {
