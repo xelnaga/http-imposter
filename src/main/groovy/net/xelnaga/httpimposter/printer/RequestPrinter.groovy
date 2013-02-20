@@ -5,20 +5,20 @@ import net.xelnaga.httpimposter.model.RequestPattern
 
 class RequestPrinter {
 
-    String print(RequestPattern pattern) {
+    String print(RequestPattern request) {
 
-        String output = pattern.method + ' ' + pattern.uri + '\n'
+        String output = request.method + ' ' + request.uri + '\n'
 
-        if (pattern.headers.size() > 0) {
+        if (request.headers.size() > 0) {
             output += '\n'
-            pattern.headers.each { HttpHeader header ->
+            request.headers.each { HttpHeader header ->
                 output += header.name.toLowerCase() + ': ' + header.value + '\n'
             }
         }
 
-        if (pattern.body.size() > 0) {
+        if (request.body.size() > 0) {
             output += '\n'
-            output += pattern.body + '\n'
+            output += request.body + '\n'
         }
 
         return output
