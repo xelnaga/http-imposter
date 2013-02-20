@@ -12,7 +12,9 @@ class MappedResponseProvider implements ResponseProvider {
     ResponsePresetFactory responsePresetFactory
 
     MappedResponseProvider() {
+
         map = [:]
+        responsePresetFactory = new ResponsePresetFactory()
     }
 
     @Override
