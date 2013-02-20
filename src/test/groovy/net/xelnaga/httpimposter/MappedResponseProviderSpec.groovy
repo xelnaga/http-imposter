@@ -1,5 +1,6 @@
 package net.xelnaga.httpimposter
 
+import net.xelnaga.httpimposter.factory.ResponsePresetFactory
 import net.xelnaga.httpimposter.model.Interaction
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
@@ -9,8 +10,14 @@ class MappedResponseProviderSpec extends Specification {
 
     ResponseProvider provider
 
+    ResponsePresetFactory mockResponsePresetFactory
+
     void setup() {
+
         provider = new MappedResponseProvider()
+
+        mockResponsePresetFactory = Mock(ResponsePresetFactory)
+        provider.responsePresetFactory = mockResponsePresetFactory
     }
 
     def 'get with known request pattern'() {
@@ -24,17 +31,31 @@ class MappedResponseProviderSpec extends Specification {
         and:
             provider.add(interaction)
 
-        expect:
-            provider.get(request).is(response)
+        when:
+            ResponsePreset result = provider.get(request)
+
+        then:
+            0 * _._
+
+        and:
+            result.is(response)
     }
 
     def 'get with unknown request pattern'() {
 
         given:
-            RequestPattern pattern = Mock(RequestPattern)
+            RequestPattern request = Mock(RequestPattern)
+            ResponsePreset response = Mock(ResponsePreset)
 
-        expect:
-            provider.get(pattern) == null
+        when:
+            ResponsePreset result = provider.get(request)
+
+        then:
+            1 * mockResponsePresetFactory.makeUnexpected() >> response
+            0 * _._
+
+        and:
+            result.is(response)
     }
 
     def 'get with duplicate request pattern'() {
