@@ -23,7 +23,6 @@ dependencies {
     groovy 'org.codehaus.groovy:groovy-all:2.0.7'
 
     compile 'javax.servlet:servlet-api:2.5',
-            'log4j:log4j:1.2.16',
             "com.google.code.gson:gson:2.2.2",
             'commons-codec:commons-codec:1.6',
             'commons-lang:commons-lang:2.6'

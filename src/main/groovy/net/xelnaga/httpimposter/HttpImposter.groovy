@@ -23,7 +23,6 @@ class HttpImposter {
 
     Engine engine = new Engine()
 
-    LogWriter logWriter = new LogWriter()
     ResponseWriter responseWriter = new ResponseWriter()
 
     void setFilter(HttpHeaderFilter filter) {
@@ -50,7 +49,6 @@ class HttpImposter {
         RequestPattern requestPattern = requestPatternFactory.fromHttpRequest(httpRequest)
         Interaction interaction = engine.interact(requestPattern)
 
-        logWriter.interact(interaction)
         responseWriter.write(interaction.response, httpResponse)
     }
 

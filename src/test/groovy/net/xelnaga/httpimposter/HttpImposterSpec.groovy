@@ -27,7 +27,6 @@ class HttpImposterSpec extends Specification {
 
     Engine mockEngine
 
-    LogWriter mockLogWriter
     ResponseWriter mockResponseWriter
 
     void setup() {
@@ -45,9 +44,6 @@ class HttpImposterSpec extends Specification {
 
         mockEngine = Mock(Engine)
         httpImposter.engine = mockEngine
-
-        mockLogWriter = Mock(LogWriter)
-        httpImposter.logWriter = mockLogWriter
 
         mockResponseWriter = Mock(ResponseWriter)
         httpImposter.responseWriter = mockResponseWriter
@@ -107,8 +103,6 @@ class HttpImposterSpec extends Specification {
             1 * mockRequestPatternFactory.fromHttpRequest(httpRequest) >> requestPattern
         then:
             1 * mockEngine.interact(requestPattern) >> interaction
-        then:
-            1 * mockLogWriter.interact(interaction)
         then:
             1 * mockResponseWriter.write(responsePreset, httpResponse)
             0 *_._
