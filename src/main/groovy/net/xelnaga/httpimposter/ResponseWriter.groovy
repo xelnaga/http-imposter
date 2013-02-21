@@ -2,8 +2,8 @@ package net.xelnaga.httpimposter
 
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ResponsePreset
-import net.xelnaga.httpimposter.serialiser.JsonReportSerializer
-import net.xelnaga.httpimposter.serialiser.ReportSerializer
+import net.xelnaga.httpimposter.serializer.json.JsonReportSerializer
+import net.xelnaga.httpimposter.serializer.ReportSerializer
 import net.xelnaga.httpimposter.model.Report
 
 import javax.servlet.http.HttpServletResponse

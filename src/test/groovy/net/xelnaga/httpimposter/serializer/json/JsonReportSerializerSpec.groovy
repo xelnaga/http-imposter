@@ -1,8 +1,7 @@
-package net.xelnaga.httpimposter.serializer
+package net.xelnaga.httpimposter.serializer.json
 
 import net.xelnaga.httpimposter.SpecificationHelper
 import net.xelnaga.httpimposter.model.Report
-import net.xelnaga.httpimposter.serialiser.JsonReportSerializer
 import spock.lang.Specification
 
 class JsonReportSerializerSpec extends Specification {
@@ -17,6 +16,7 @@ class JsonReportSerializerSpec extends Specification {
     void setup() {
 
         serializer = new JsonReportSerializer()
+
         helper = new SpecificationHelper()
 
         report = new Report(

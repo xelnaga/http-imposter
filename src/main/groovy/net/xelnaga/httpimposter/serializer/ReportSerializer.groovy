@@ -1,4 +1,4 @@
-package net.xelnaga.httpimposter.serialiser
+package net.xelnaga.httpimposter.serializer
 
 import net.xelnaga.httpimposter.model.Report
 
