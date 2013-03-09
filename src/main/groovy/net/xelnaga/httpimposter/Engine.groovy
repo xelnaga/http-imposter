@@ -24,12 +24,10 @@ class Engine {
         return new Report(expectations, interactions)
     }
 
-    void expect(int cardinality, Interaction expectation) {
+    void expect(Interaction expectation) {
 
-        cardinality.times {
-            expectations << expectation
-            responseProvider.add(expectation)
-        }
+        expectations << expectation
+        responseProvider.add(expectation)
     }
 
     Interaction interact(RequestPattern request) {

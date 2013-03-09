@@ -35,13 +35,11 @@ class HttpImposter {
 
         Map json = gson.fromJson(httpRequest.inputStream.text, HashMap)
 
-        int cardinality = json.cardinality
-
         RequestPattern requestPattern = requestPatternMarshaller.fromJson(json.requestPattern)
         ResponsePreset responsePreset = responsePresetMarshaller.fromJson(json.responsePreset)
         Interaction interaction = new Interaction(requestPattern, responsePreset)
 
-        engine.expect(cardinality, interaction)
+        engine.expect(interaction)
     }
 
     void interact(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {

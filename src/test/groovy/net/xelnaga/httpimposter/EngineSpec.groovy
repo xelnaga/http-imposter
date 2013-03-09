@@ -30,7 +30,7 @@ class EngineSpec extends Specification {
             Interaction expectation = helper.makeInteraction(1)
 
         when:
-            engine.expect(1, expectation)
+            engine.expect(expectation)
 
         then:
             1 * mockResponseProvider.add(expectation)
@@ -38,26 +38,6 @@ class EngineSpec extends Specification {
 
         and:
             engine.report == new Report([expectation], [])
-    }
-
-    def 'expect with cardinality'() {
-
-        given:
-            Interaction expectation1 = helper.makeInteraction(1)
-
-        when:
-            engine.expect(3, expectation1)
-
-        then:
-            1 * mockResponseProvider.add(expectation1)
-        then:
-            1 * mockResponseProvider.add(expectation1)
-        then:
-            1 * mockResponseProvider.add(expectation1)
-            0 * _._
-
-        and:
-            engine.report == new Report([expectation1, expectation1, expectation1], [])
     }
 
     def 'interact'() {
@@ -87,7 +67,7 @@ class EngineSpec extends Specification {
             Interaction interaction = helper.makeInteraction(1)
 
         when:
-            engine.expect(1, interaction)
+            engine.expect(interaction)
             engine.interact(interaction.request)
 
         then:

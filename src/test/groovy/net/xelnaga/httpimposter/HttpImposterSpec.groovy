@@ -82,7 +82,7 @@ class HttpImposterSpec extends Specification {
         then:
             1 * mockResponsePresetMarshaller.fromJson([asdfgh: 'asdfgh']) >> responsePreset
         then:
-            1 * mockEngine.expect(4, interaction)
+            1 * mockEngine.expect(interaction)
             0 * _._
     }
 
