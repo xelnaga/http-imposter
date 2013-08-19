@@ -20,7 +20,7 @@ class ResponseWriter {
             httpResponse.addHeader(httpHeader.name, httpHeader.value)
         }
 
-        httpResponse.outputStream << responsePreset.body
+        httpResponse.outputStream << responsePreset.getBodyAsByteArray()
 
         return httpResponse
     }
