@@ -1,6 +1,6 @@
 package net.xelnaga.httpimposter.printer
 
-import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.DefaultHttpHeader
 import net.xelnaga.httpimposter.model.ResponsePreset
 import spock.lang.Specification
 
@@ -36,8 +36,8 @@ class ResponsePrinterSpec extends Specification {
             ResponsePreset response = new ResponsePreset(
                     status: 201,
                     headers:  [
-                            new HttpHeader('someheader1', 'somevalue1'),
-                            new HttpHeader('someheader2', 'somevalue2')
+                            new DefaultHttpHeader('someheader1', 'somevalue1'),
+                            new DefaultHttpHeader('someheader2', 'somevalue2')
                     ],
                     body: ''
             )
@@ -83,8 +83,8 @@ the lazy dog
             ResponsePreset response = new ResponsePreset(
                     status: 201,
                     headers: [
-                            new HttpHeader('someheader1', 'somevalue1'),
-                            new HttpHeader('someheader2', 'somevalue2')
+                            new DefaultHttpHeader('someheader1', 'somevalue1'),
+                            new DefaultHttpHeader('someheader2', 'somevalue2')
                     ],
                     body: """\
 the quick brown fox jumped over

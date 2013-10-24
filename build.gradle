@@ -1,6 +1,7 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'idea'
+apply plugin: 'artifactory'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -12,10 +13,52 @@ ext {
     artifactId = 'http-imposter'
 }
 
-repositories {
+buildscript {
+    repositories {
+        maven { url 'http://gradle.artifactoryonline.com/gradle/libs' }
+        maven { url 'http://gradle.artifactoryonline.com/gradle/plugins' }
+        maven { url 'http://dl.bintray.com/jfrog/jfrog-jars' }
+    }
 
+    dependencies {
+        classpath(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '2.2.0')
+    }
+}
+
+repositories {
     mavenLocal()
     mavenCentral()
+}
+
+artifactory {
+    contextUrl = System.getenv('ARTIFACTORY_CONTEXT_URL')
+
+    publish {
+        repository {
+            repoKey = 'libs-releases-local'
+            username = System.getenv('ARTIFACTORY_USER')
+            password = System.getenv('ARTIFACTORY_PASSWORD')
+            maven = true
+        }
+    }
+
+    resolve {
+        repository {
+            repoKey = 'libs-releases'
+            username = System.getenv('ARTIFACTORY_USER')
+            password = System.getenv('ARTIFACTORY_PASSWORD')
+            maven = true
+        }
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 dependencies {

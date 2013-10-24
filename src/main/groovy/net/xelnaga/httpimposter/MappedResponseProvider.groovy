@@ -19,9 +19,13 @@ class MappedResponseProvider implements ResponseProvider {
 
     @Override
     ResponsePreset get(RequestPattern request) {
-
-        if (map.containsKey(request)) {
-            return map[request]
+        ResponsePreset response = map.findResult { RequestPattern expectedRequest, ResponsePreset response ->
+            if (expectedRequest.matches(request)) {
+                return response
+            }
+        }
+        if (response) {
+            return response
         }
 
         return responsePresetFactory.makeUnexpected()

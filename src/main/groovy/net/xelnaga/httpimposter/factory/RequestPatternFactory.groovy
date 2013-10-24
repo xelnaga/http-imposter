@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest
 class RequestPatternFactory {
 
     HttpHeaderFilter filter = new PassThroughFilter()
+    HttpHeaderFactory headerFactory = new TypeResolvingHeaderFactory()
 
     RequestPattern fromHttpRequest(HttpServletRequest request) {
 
@@ -26,7 +27,8 @@ class RequestPatternFactory {
         request.headerNames.each { String name ->
 
             String value = request.getHeader(name)
-            HttpHeader httpHeader = new HttpHeader(name, value)
+            Map headerMap = [name: name, value: value]
+            HttpHeader httpHeader = headerFactory.makeHeader(headerMap)
             addMatchableHeader(pattern, httpHeader)
         }
         

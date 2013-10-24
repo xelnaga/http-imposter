@@ -1,6 +1,6 @@
 package net.xelnaga.httpimposter.printer
 
-import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.DefaultHttpHeader
 import net.xelnaga.httpimposter.model.RequestPattern
 import spock.lang.Specification
 
@@ -38,8 +38,8 @@ POST /someuri
                     method: 'GET',
                     uri: '/someuri',
                     headers:  [
-                            new HttpHeader('someheader1', 'somevalue1'),
-                            new HttpHeader('someheader2', 'somevalue2')
+                            new DefaultHttpHeader('someheader1', 'somevalue1'),
+                            new DefaultHttpHeader('someheader2', 'somevalue2')
                     ],
                     body: ''
             )
@@ -86,8 +86,8 @@ the lazy dog
                     method: 'POST',
                     uri: '/someuri',
                     headers: [
-                            new HttpHeader('someheader1', 'somevalue1'),
-                            new HttpHeader('someheader2', 'somevalue2')
+                            new DefaultHttpHeader('someheader1', 'somevalue1'),
+                            new DefaultHttpHeader('someheader2', 'somevalue2')
                     ],
                     body: """\
 the quick brown fox jumped over

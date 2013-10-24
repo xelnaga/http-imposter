@@ -1,7 +1,7 @@
 package net.xelnaga.httpimposter.marshaller
 
 import net.xelnaga.httpimposter.model.ByteArrayResponsePreset
-import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.DefaultHttpHeader
 import net.xelnaga.httpimposter.model.ResponsePreset
 import spock.lang.Specification
 
@@ -32,8 +32,8 @@ class ResponsePresetMarshallerSpec extends Specification {
             result == new ResponsePreset(
                     status: 234,
                     headers: [
-                            new HttpHeader('Content-Type', 'text/exciting'),
-                            new HttpHeader('Lemon', 'Lime')
+                            new DefaultHttpHeader('Content-Type', 'text/exciting'),
+                            new DefaultHttpHeader('Lemon', 'Lime')
                     ],
                     body: 'bodytest64'
             )
@@ -62,8 +62,8 @@ class ResponsePresetMarshallerSpec extends Specification {
             result == new ResponsePreset(
                     status: 234,
                     headers: [
-                            new HttpHeader('Content-Type', 'text/exciting'),
-                            new HttpHeader('Lemon', 'Lime')
+                            new DefaultHttpHeader('Content-Type', 'text/exciting'),
+                            new DefaultHttpHeader('Lemon', 'Lime')
                     ],
                     body: 'Ym9keXRlc3Q2NA=='
             )

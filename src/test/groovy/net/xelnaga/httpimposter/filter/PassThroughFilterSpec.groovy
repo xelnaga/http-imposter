@@ -1,6 +1,6 @@
 package net.xelnaga.httpimposter.filter
 
-import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.DefaultHttpHeader
 import spock.lang.Specification
 
 class PassThroughFilterSpec extends Specification {
@@ -12,6 +12,6 @@ class PassThroughFilterSpec extends Specification {
         
         expect:
             filter.isMatchable(null)
-            filter.isMatchable(new HttpHeader('qwerty', 'blah'))
+            filter.isMatchable(new DefaultHttpHeader('qwerty', 'blah'))
     }
 }

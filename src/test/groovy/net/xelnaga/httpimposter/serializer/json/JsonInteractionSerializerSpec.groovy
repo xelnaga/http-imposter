@@ -2,6 +2,7 @@ package net.xelnaga.httpimposter.serializer.json
 
 import net.xelnaga.httpimposter.SpecificationHelper
 import net.xelnaga.httpimposter.model.Interaction
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class JsonInteractionSerializerSpec extends Specification {

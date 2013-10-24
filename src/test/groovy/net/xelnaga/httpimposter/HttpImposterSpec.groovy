@@ -6,7 +6,9 @@ import net.xelnaga.httpimposter.filter.HeaderNameExclusionFilter
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
 import net.xelnaga.httpimposter.marshaller.RequestPatternMarshaller
 import net.xelnaga.httpimposter.marshaller.ResponsePresetMarshaller
+import net.xelnaga.httpimposter.model.DefaultHttpHeader
 import net.xelnaga.httpimposter.model.Interaction
+import net.xelnaga.httpimposter.model.RegexMatchingHttpHeader
 import net.xelnaga.httpimposter.model.Report
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
@@ -18,6 +20,9 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class HttpImposterSpec extends Specification {
+
+    private static final Map<String, String> expectedRequestPatternMap = [qwerty: 'qwerty']
+    private static final Map<String, String> expectedResponsePatternMap = [asdfgh: 'asdfgh']
 
     HttpImposter httpImposter
 
@@ -52,38 +57,39 @@ class HttpImposterSpec extends Specification {
     def 'set filter'() {
 
         given:
-            HttpHeaderFilter filter = new HeaderNameExclusionFilter(['qwerty'])
+            HttpHeaderFilter filter = Mock(HttpHeaderFilter)
 
         when:
             httpImposter.setFilter(filter)
 
         then:
-            1 * mockRequestPatternFactory.setProperty('filter', filter)
+            1 * mockRequestPatternFactory.setFilter(filter)
         then:
-            1 * mockRequestPatternMarshaller.setProperty('filter', filter)
-            0 * _._
+            1 * mockRequestPatternMarshaller.setFilter(filter)
+            0 * _
     }
 
     def 'expect'() {
         
         given:
             HttpServletRequest httpRequest = new MockHttpServletRequest()
-            httpRequest.content = new Gson().toJson([cardinality: 4, requestPattern: [qwerty: 'qwerty'], responsePreset: [asdfgh: 'asdfgh']]).bytes
+            httpRequest.content = new Gson().toJson([cardinality: 4, requestPattern: expectedRequestPatternMap, responsePreset: expectedResponsePatternMap]).bytes
 
-            RequestPattern requestPattern = new RequestPattern(body: 'apple')
-            ResponsePreset responsePreset = new ResponsePreset(body: 'pear')
+        and:
+            RequestPattern requestPattern = Mock(RequestPattern)
+            ResponsePreset responsePreset = Mock(ResponsePreset)
             Interaction interaction = new Interaction(requestPattern, responsePreset)
 
         when:
             httpImposter.expect(httpRequest)
 
         then:
-            1 * mockRequestPatternMarshaller.fromJson([qwerty: 'qwerty']) >> requestPattern
+            1 * mockRequestPatternMarshaller.fromJson(expectedRequestPatternMap) >> requestPattern
         then:
-            1 * mockResponsePresetMarshaller.fromJson([asdfgh: 'asdfgh']) >> responsePreset
+            1 * mockResponsePresetMarshaller.fromJson(expectedResponsePatternMap) >> responsePreset
         then:
             1 * mockEngine.expect(interaction)
-            0 * _._
+            0 * _
     }
 
     def 'interact'() {
@@ -105,7 +111,7 @@ class HttpImposterSpec extends Specification {
             1 * mockEngine.interact(requestPattern) >> interaction
         then:
             1 * mockResponseWriter.write(responsePreset, httpResponse)
-            0 *_._
+            0 * _
     }
 
     def 'report'() {
@@ -121,7 +127,7 @@ class HttpImposterSpec extends Specification {
             1 * mockEngine.getReport() >> mockReport
         then:
             1 * mockResponseWriter.write(mockReport, response)
-            0 * _._
+            0 * _
     }
 
     def 'reset'() {
@@ -131,6 +137,6 @@ class HttpImposterSpec extends Specification {
 
         then:
             1 * mockEngine.reset()
-            0 * _._
+            0 * _
     }
 }

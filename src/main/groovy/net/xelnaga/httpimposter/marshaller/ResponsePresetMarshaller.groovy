@@ -1,19 +1,20 @@
 package net.xelnaga.httpimposter.marshaller
 
+import net.xelnaga.httpimposter.factory.HttpHeaderFactory
+import net.xelnaga.httpimposter.factory.TypeResolvingHeaderFactory
 import net.xelnaga.httpimposter.model.ByteArrayResponsePreset
-import net.xelnaga.httpimposter.model.HttpHeader
-
-import org.apache.commons.codec.binary.Base64
 import net.xelnaga.httpimposter.model.ResponsePreset
+import org.apache.commons.codec.binary.Base64
 
 class ResponsePresetMarshaller {
+    HttpHeaderFactory httpHeaderFactory = new TypeResolvingHeaderFactory()
 
     ResponsePreset fromJson(Map json) {
 
         ResponsePreset imposterResponse = makeResponsePresetFromType(json)
 
         json.headers.each { Map header ->
-            imposterResponse.headers << new HttpHeader(header.name, header.value)
+            imposterResponse.headers << httpHeaderFactory.makeHeader(header)
         }
 
         return imposterResponse

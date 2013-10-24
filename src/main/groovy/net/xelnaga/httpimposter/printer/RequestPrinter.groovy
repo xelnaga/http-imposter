@@ -12,7 +12,7 @@ class RequestPrinter {
         if (request.headers.size() > 0) {
             output += '\n'
             request.headers.each { HttpHeader header ->
-                output += header.name.toLowerCase() + ': ' + header.value + '\n'
+                output += header.toString() + '\n'
             }
         }
 
