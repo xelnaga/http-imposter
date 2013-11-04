@@ -1,6 +1,6 @@
 package net.xelnaga.httpimposter.model
 
-interface HttpHeader extends Comparable {
+interface HttpHeader extends Comparable<HttpHeader> {
     String getName()
     String getValue()
 

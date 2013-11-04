@@ -16,9 +16,9 @@ class ResponsePrinter {
             }
         }
 
-        if (response.body.size() > 0) {
+        if (!response.body.isEmpty()) {
             output += '\n'
-            output += response.body + '\n'
+            output += response.body.value + '\n'
         }
 
         return output

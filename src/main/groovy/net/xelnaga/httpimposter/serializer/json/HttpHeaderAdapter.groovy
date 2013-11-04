@@ -10,6 +10,10 @@ import net.xelnaga.httpimposter.model.HttpHeader
 
 class HttpHeaderAdapter extends TypeAdapter<HttpHeader> {
 
+    private static final String NAME_KEY_NAME = 'name'
+    private static final String VALUE_KEY_NAME = 'value'
+    private static final String TYPE_KEY_NAME = 'type'
+
     HttpHeaderFactory headerFactory = new TypeResolvingHeaderFactory()
 
     public HttpHeader read(JsonReader reader) throws IOException {
@@ -60,11 +64,11 @@ class HttpHeaderAdapter extends TypeAdapter<HttpHeader> {
             return
         }
         writer.beginObject()
-        writer.name('name')
+        writer.name(NAME_KEY_NAME)
         writer.value(header.name)
-        writer.name('value')
+        writer.name(VALUE_KEY_NAME)
         writer.value(header.value)
-        writer.name('type')
+        writer.name(TYPE_KEY_NAME)
         writer.value(header.type)
         writer.endObject()
     }

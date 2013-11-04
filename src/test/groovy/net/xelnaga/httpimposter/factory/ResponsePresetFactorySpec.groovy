@@ -1,5 +1,6 @@
 package net.xelnaga.httpimposter.factory
 
+import net.xelnaga.httpimposter.model.DefaultBody
 import net.xelnaga.httpimposter.model.ResponsePreset
 import net.xelnaga.httpimposter.model.DefaultHttpHeader
 import spock.lang.Specification
@@ -25,7 +26,7 @@ class ResponsePresetFactorySpec extends Specification {
                     headers: [
                             new DefaultHttpHeader('Content-Type', 'text/plain')
                     ],
-                    body: 'UNEXPECTED REQUEST PATTERN'
+                    body: new DefaultBody('UNEXPECTED REQUEST PATTERN')
             )
     }
 }

@@ -4,7 +4,6 @@ class DefaultHttpHeader extends BaseHttpHeader {
 
     final String name
     final String value
-    final String type = 'default'
 
     DefaultHttpHeader(String name, String value) {
         this.name = name
@@ -17,24 +16,23 @@ class DefaultHttpHeader extends BaseHttpHeader {
     }
 
     @Override
-    int compareTo(Object obj) {
-        if (!(obj instanceof HttpHeader)) {
-            return 1
-        }
+    int compareTo(HttpHeader other) {
 
-        HttpHeader that = (HttpHeader) obj
-
-        int result = name.compareToIgnoreCase(that.name)
+        int result = name.compareToIgnoreCase(other.name)
         if (result != 0) {
             return result
         }
 
-        result = type.compareTo(that.type)
+        result = type.compareTo(other.type)
         if (result != 0) {
             return result
         }
 
-        return compareValue(that.value)
+        return compareValue(other.value)
     }
 
+    @Override
+    String getType() {
+        return HttpHeaderTypes.DEFAULT
+    }
 }

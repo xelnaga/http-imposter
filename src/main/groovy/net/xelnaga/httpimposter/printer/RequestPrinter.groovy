@@ -16,9 +16,10 @@ class RequestPrinter {
             }
         }
 
-        if (request.body.size() > 0) {
+        if (!request.body.isEmpty()) {
             output += '\n'
-            output += request.body + '\n'
+            output += "type: '" + request.body.type + "'\n"
+            output += request.body.value + '\n'
         }
 
         return output

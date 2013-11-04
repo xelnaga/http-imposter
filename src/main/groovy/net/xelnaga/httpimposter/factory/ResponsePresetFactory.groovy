@@ -1,5 +1,6 @@
 package net.xelnaga.httpimposter.factory
 
+import net.xelnaga.httpimposter.model.DefaultBody
 import net.xelnaga.httpimposter.model.ResponsePreset
 
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR
@@ -14,7 +15,7 @@ class ResponsePresetFactory {
                 headers: [
                         new DefaultHttpHeader('Content-Type', 'text/plain')
                 ],
-                body: 'UNEXPECTED REQUEST PATTERN'
+                body: new DefaultBody('UNEXPECTED REQUEST PATTERN')
         )
     }
 }

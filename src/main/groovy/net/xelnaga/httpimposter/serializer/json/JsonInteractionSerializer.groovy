@@ -1,22 +1,28 @@
 package net.xelnaga.httpimposter.serializer.json
 
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.Interaction
 import net.xelnaga.httpimposter.serializer.InteractionSerializer
 
 class JsonInteractionSerializer implements InteractionSerializer {
 
-    private Gson gson = new GsonBuilder().registerTypeAdapter(HttpHeader.class, new HttpHeaderAdapter()).create()
+    Gson serializer
 
     @Override
     String serialize(Interaction interaction) {
-        return gson.toJson(interaction)
+        return getSerializer().toJson(interaction)
     }
 
     @Override
     Interaction deserialize(String interaction) {
-        return gson.fromJson(interaction, Interaction)
+        return getSerializer().fromJson(interaction, Interaction)
+    }
+
+    Gson getSerializer() {
+        if (!serializer) {
+            ModelAwareJsonSerializerFactory factory = new ModelAwareJsonSerializerFactory()
+            serializer = factory.serializer
+        }
+        return serializer
     }
 }

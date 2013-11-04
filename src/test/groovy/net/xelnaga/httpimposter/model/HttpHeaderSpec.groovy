@@ -6,7 +6,7 @@ import spock.lang.Unroll
 class HttpHeaderSpec extends Specification {
 
     @Unroll
-    def 'equals and hashcode'() {
+    def 'equals and hash code'() {
     
         given:
             DefaultHttpHeader header1 = new DefaultHttpHeader(name1, value1)
@@ -44,6 +44,7 @@ class HttpHeaderSpec extends Specification {
     }
 
     def 'equals with identical implementations and matching values (default)'() {
+
         given:
             def obj1 = new DefaultHttpHeader('name', 'expression')
             def obj2 = new DefaultHttpHeader('name', 'expression')
@@ -54,6 +55,7 @@ class HttpHeaderSpec extends Specification {
     }
 
     def 'equals with identical implementations and matching values (regex)'() {
+
         given:
             def obj1 = new RegexMatchingHttpHeader('name', 'expression')
             def obj2 = new RegexMatchingHttpHeader('name', 'expression')
@@ -64,6 +66,7 @@ class HttpHeaderSpec extends Specification {
     }
 
     def 'equals with different implementations and matching values'() {
+
         given:
             def obj1 = new RegexMatchingHttpHeader('name', 'expression')
             def obj2 = new DefaultHttpHeader('name', 'expression')
@@ -74,6 +77,7 @@ class HttpHeaderSpec extends Specification {
     }
 
     def 'compareTo using different instances'() {
+
         given:
             def obj1 = new RegexMatchingHttpHeader('name', 'expression')
             def obj2 = new DefaultHttpHeader('name', 'expression')
@@ -113,6 +117,7 @@ class HttpHeaderSpec extends Specification {
     }
 
     def 'compare to (regex)'() {
+
         given:
             List<HttpHeader> headers = [
                 new RegexMatchingHttpHeader('Content-Type', 'text/plain'),
@@ -130,5 +135,4 @@ class HttpHeaderSpec extends Specification {
         then:
             treeSet as List == [ headers[2], headers[3], headers[1] ]
     }
-
 }

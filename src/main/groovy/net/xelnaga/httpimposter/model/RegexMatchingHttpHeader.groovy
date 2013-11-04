@@ -4,7 +4,6 @@ class RegexMatchingHttpHeader extends BaseHttpHeader {
 
     final String name
     final String value
-    final String type = 'regex'
 
     RegexMatchingHttpHeader(String name, String regularExpression) {
         this.name = name
@@ -18,18 +17,17 @@ class RegexMatchingHttpHeader extends BaseHttpHeader {
     }
 
     @Override
-    int compareTo(Object obj) {
-        if (!(obj instanceof HttpHeader)) {
-            return 1
-        }
-
-        HttpHeader that = (HttpHeader) obj
-
-        int result = name.compareToIgnoreCase(that.name)
+    int compareTo(HttpHeader other) {
+        int result = name.compareToIgnoreCase(other.name)
         if (result != 0) {
             return result
         }
 
-        return compareValue(that.value)
+        return compareValue(other.value)
+    }
+
+    @Override
+    String getType() {
+        return HttpHeaderTypes.REGEX
     }
 }

@@ -1,6 +1,7 @@
 package net.xelnaga.httpimposter.factory
 
 import net.xelnaga.httpimposter.filter.HttpHeaderFilter
+import net.xelnaga.httpimposter.model.DefaultBody
 import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.DefaultHttpHeader
@@ -62,7 +63,7 @@ class RequestPatternFactorySpec extends Specification {
                             new DefaultHttpHeader('Content-Type', 'text/banana'),
                             new DefaultHttpHeader('Pineapple', 'Passionfruit')
                     ],
-                    body: 'qwerty'
+                    body: new DefaultBody('qwerty')
             )
     }
 
@@ -104,7 +105,7 @@ class RequestPatternFactorySpec extends Specification {
                             new DefaultHttpHeader('Content-Type', 'text/banana'),
                             new DefaultHttpHeader('Pineapple', 'Passionfruit')
                     ],
-                    body: 'qwerty'
+                    body: new DefaultBody('qwerty')
             )
     }
 }

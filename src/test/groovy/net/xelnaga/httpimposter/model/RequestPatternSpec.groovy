@@ -6,12 +6,14 @@ import spock.lang.Unroll
 class RequestPatternSpec extends Specification {
 
     def 'headers are initialised sorted set'() {
+
         expect:
             new RequestPattern().headers instanceof SortedSet
     }
 
     @Unroll
     def 'matches using regular expression'() {
+
         given:
             RequestPattern pattern1 = new RequestPattern(headers: [new RegexMatchingHttpHeader('name', expression)])
             RequestPattern pattern2 = new RequestPattern(headers: [new DefaultHttpHeader('name', value)])
@@ -29,6 +31,7 @@ class RequestPatternSpec extends Specification {
 
     @Unroll
     def 'matches (same value)'() {
+
         given:
             RequestPattern pattern1 = new RequestPattern(headers: [new DefaultHttpHeader(name1, 'value')])
             RequestPattern pattern2 = new RequestPattern(headers: [new DefaultHttpHeader(name2, 'value')])
@@ -46,6 +49,7 @@ class RequestPatternSpec extends Specification {
 
     @Unroll
     def 'matches (different value)'() {
+
         given:
             RequestPattern pattern1 = new RequestPattern(headers: [new DefaultHttpHeader('name', value1)])
             RequestPattern pattern2 = new RequestPattern(headers: [new DefaultHttpHeader('name', value2)])
@@ -61,5 +65,22 @@ class RequestPatternSpec extends Specification {
             'a'    | 'b'    | false
     }
 
+    @Unroll
+    def 'body matches'() {
+
+        given:
+            RequestPattern pattern1 = new RequestPattern(body: new DefaultBody(body1))
+            RequestPattern pattern2 = new RequestPattern(body: new DefaultBody(body2))
+
+        expect:
+            result == pattern1.matches(pattern2)
+
+        where:
+            body1 | body2 | result
+            'a'   | 'a'   | true
+            'a'   | 'A'   | false
+            'A'   | 'a'   | false
+            'a'   | 'b'   | false
+    }
 }
 

@@ -8,13 +8,21 @@ class RequestPattern {
     String method
     String uri
     Set<HttpHeader> headers = [] as TreeSet
-    String body
+    Body body
 
     boolean matches(RequestPattern other) {
 
-        if (method != other.method) { return false }
-        if (uri != other.uri) { return false }
-        if (body != other.body) { return false }
+        if (method != other.method) {
+            return false
+        }
+
+        if (uri != other.uri) {
+            return false
+        }
+
+        if (body && !body.matches(other.body)) {
+            return false
+        }
 
         if (headers.size() != other.headers.size()) { return false }
 
