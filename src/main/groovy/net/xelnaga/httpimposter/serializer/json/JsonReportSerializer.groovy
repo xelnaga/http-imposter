@@ -6,15 +6,23 @@ import net.xelnaga.httpimposter.serializer.ReportSerializer
 
 class JsonReportSerializer implements ReportSerializer {
 
-    private Gson gson = new Gson()
+    Gson serializer
 
     @Override
     String serialize(Report report) {
-        return gson.toJson(report)
+        return getSerializer().toJson(report)
     }
 
     @Override
     Report deserialize(String report) {
-        return gson.fromJson(report, Report)
+        return getSerializer().fromJson(report, Report)
+    }
+
+    Gson getSerializer() {
+        if (!serializer) {
+            ModelAwareJsonSerializerFactory factory = new ModelAwareJsonSerializerFactory()
+            serializer = factory.serializer
+        }
+        return serializer
     }
 }

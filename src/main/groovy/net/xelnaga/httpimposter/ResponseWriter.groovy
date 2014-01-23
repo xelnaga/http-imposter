@@ -1,7 +1,7 @@
 package net.xelnaga.httpimposter
 
-import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.model.ResponsePreset
+import net.xelnaga.httpimposter.model.HttpHeader
 import net.xelnaga.httpimposter.serializer.json.JsonReportSerializer
 import net.xelnaga.httpimposter.serializer.ReportSerializer
 import net.xelnaga.httpimposter.model.Report
@@ -20,7 +20,7 @@ class ResponseWriter {
             httpResponse.addHeader(httpHeader.name, httpHeader.value)
         }
 
-        httpResponse.outputStream << responsePreset.getBodyAsByteArray()
+        httpResponse.outputStream << responsePreset.body.value.bytes
 
         return httpResponse
     }

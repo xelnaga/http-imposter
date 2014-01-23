@@ -1,10 +1,13 @@
 package net.xelnaga.httpimposter.printer
 
-import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.DefaultHttpHeader
+import net.xelnaga.httpimposter.model.DefaultBody
 import net.xelnaga.httpimposter.model.RequestPattern
 import spock.lang.Specification
 
 class RequestPrinterSpec extends Specification {
+
+    private static final DefaultBody EMPTY_REQUEST_BODY = new DefaultBody('')
 
     RequestPrinter printer
 
@@ -19,7 +22,7 @@ class RequestPrinterSpec extends Specification {
                     method: 'POST',
                     uri: '/someuri',
                     headers:  [],
-                    body: ''
+                    body: EMPTY_REQUEST_BODY
             )
 
         when:
@@ -38,10 +41,10 @@ POST /someuri
                     method: 'GET',
                     uri: '/someuri',
                     headers:  [
-                            new HttpHeader('someheader1', 'somevalue1'),
-                            new HttpHeader('someheader2', 'somevalue2')
+                            new DefaultHttpHeader('someheader1', 'somevalue1'),
+                            new DefaultHttpHeader('someheader2', 'somevalue2')
                     ],
-                    body: ''
+                    body: EMPTY_REQUEST_BODY
             )
 
         when:
@@ -63,10 +66,10 @@ someheader2: somevalue2
                     method: 'GET',
                     uri: '/someuri',
                     headers: [],
-                    body:  """\
+                    body:   new DefaultBody("""\
 the quick brown fox jumped over
 the lazy dog"""
-            )
+            ))
 
         when:
             String result = printer.print(request)
@@ -74,6 +77,7 @@ the lazy dog"""
         then:
             result == '''GET /someuri
 
+type: 'default'
 the quick brown fox jumped over
 the lazy dog
 '''
@@ -86,13 +90,13 @@ the lazy dog
                     method: 'POST',
                     uri: '/someuri',
                     headers: [
-                            new HttpHeader('someheader1', 'somevalue1'),
-                            new HttpHeader('someheader2', 'somevalue2')
+                            new DefaultHttpHeader('someheader1', 'somevalue1'),
+                            new DefaultHttpHeader('someheader2', 'somevalue2')
                     ],
-                    body: """\
+                    body:  new DefaultBody("""\
 the quick brown fox jumped over
 the lazy dog"""
-        )
+        ))
 
         when:
             String result = printer.print(request)
@@ -104,9 +108,9 @@ POST /someuri
 someheader1: somevalue1
 someheader2: somevalue2
 
+type: 'default'
 the quick brown fox jumped over
 the lazy dog
 '''
     }
-
 }

@@ -1,23 +1,25 @@
 package net.xelnaga.httpimposter
 
 import net.xelnaga.httpimposter.factory.ResponsePresetFactory
+import net.xelnaga.httpimposter.model.DefaultHttpHeader
 import net.xelnaga.httpimposter.model.Interaction
+import net.xelnaga.httpimposter.model.RegexMatchingHttpHeader
 import net.xelnaga.httpimposter.model.RequestPattern
 import net.xelnaga.httpimposter.model.ResponsePreset
 import spock.lang.Specification
 
 class MappedResponseProviderSpec extends Specification {
 
-    ResponseProvider provider
+    ResponseProvider responseProvider
 
     ResponsePresetFactory mockResponsePresetFactory
 
     void setup() {
 
-        provider = new MappedResponseProvider()
+        responseProvider = new MappedResponseProvider()
 
         mockResponsePresetFactory = Mock(ResponsePresetFactory)
-        provider.responsePresetFactory = mockResponsePresetFactory
+        responseProvider.responsePresetFactory = mockResponsePresetFactory
     }
 
     def 'get with known request pattern'() {
@@ -29,17 +31,51 @@ class MappedResponseProviderSpec extends Specification {
             Interaction interaction = new Interaction(request, response)
 
         and:
-            provider.add(interaction)
+            responseProvider.add(interaction)
 
         when:
-            ResponsePreset result = provider.get(request)
+            ResponsePreset result = responseProvider.get(request)
 
         then:
-            0 * _._
+            1 * request.matches(request) >> true
+            0 * _
 
         and:
             result.is(response)
     }
+
+    def 'get with request pattern should match when using regex header matching implementation'() {
+
+        given:
+            RequestPattern expectedRequest = new RequestPattern(
+                headers: [
+                    new RegexMatchingHttpHeader('name', '.*matchthis.*')
+                ]
+            )
+            ResponsePreset response = Mock(ResponsePreset)
+
+            Interaction interaction = new Interaction(expectedRequest, response)
+
+        and:
+            responseProvider.add(interaction)
+
+        and:
+            RequestPattern actualRequest = new RequestPattern(
+                headers: [
+                    new DefaultHttpHeader('name', '---matchthis---')
+                ]
+            )
+
+        when:
+            ResponsePreset result = responseProvider.get(actualRequest)
+
+        then:
+            0 * _
+
+        and:
+            result.is(response)
+    }
+
 
     def 'get with unknown request pattern'() {
 
@@ -48,17 +84,17 @@ class MappedResponseProviderSpec extends Specification {
             ResponsePreset response = Mock(ResponsePreset)
 
         when:
-            ResponsePreset result = provider.get(request)
+            ResponsePreset result = responseProvider.get(request)
 
         then:
             1 * mockResponsePresetFactory.makeUnexpected() >> response
-            0 * _._
+            0 * _
 
         and:
             result.is(response)
     }
 
-    def 'get with duplicate request pattern'() {
+    def 'second interaction overwrites first if request is the same'() {
 
         given:
             RequestPattern request = Mock(RequestPattern)
@@ -70,11 +106,16 @@ class MappedResponseProviderSpec extends Specification {
             Interaction interaction2 = new Interaction(request, response2)
 
         and:
-            provider.add(interaction1)
-            provider.add(interaction2)
+            responseProvider.add(interaction1)
+            responseProvider.add(interaction2)
 
-        expect:
-            provider.get(request).is(response2)
+        when:
+            responseProvider.get(request).is(response2)
+
+        then:
+            1 * request.matches(request) >> true
+            0 * _
+
     }
 
     def 'reset'() {
@@ -86,15 +127,22 @@ class MappedResponseProviderSpec extends Specification {
             Interaction interaction = new Interaction(request, response)
 
         and:
-            provider.add(interaction)
-
-        expect:
-            provider.get(request).is(response)
+            responseProvider.add(interaction)
 
         when:
-            provider.reset()
+            responseProvider.get(request).is(response)
 
         then:
-            provider.get(request) == null
+            1 * request.matches(request) >> true
+            0 * _
+
+        when:
+            responseProvider.reset()
+
+        then:
+            0 * _
+
+        and:
+            responseProvider.get(request) == null
     }
 }

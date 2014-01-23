@@ -20,7 +20,7 @@ class JsonInteractionSerializerSpec extends Specification {
         helper = new SpecificationHelper()
 
         interaction = helper.makeInteraction(1)
-        serialized = '''{"request":{"method":"somemethod1","uri":"/someuri1","headers":[{"name":"headername1","value":"headervalue1"}],"body":"somebody1"},"response":{"status":201,"headers":[{"name":"headername1","value":"headervalue1"}],"body":"somebody1"}}'''
+        serialized = '''{"request":{"method":"somemethod1","uri":"/someuri1","headers":[{"name":"headername1","value":"headervalue1","type":"default"}],"body":{"value":"cmVxdWVzdEJvZHkx","type":"default"}},"response":{"status":201,"headers":[{"name":"headername1","value":"headervalue1","type":"default"}],"body":{"value":"cmVzcG9uc2VCb2R5MQ==","type":"default"}}}'''
     }
 
     def 'serialize'() {

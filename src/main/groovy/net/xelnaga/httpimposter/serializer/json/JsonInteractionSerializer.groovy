@@ -6,15 +6,23 @@ import net.xelnaga.httpimposter.serializer.InteractionSerializer
 
 class JsonInteractionSerializer implements InteractionSerializer {
 
-    private Gson gson = new Gson()
+    Gson serializer
 
     @Override
     String serialize(Interaction interaction) {
-        return gson.toJson(interaction)
+        return getSerializer().toJson(interaction)
     }
 
     @Override
     Interaction deserialize(String interaction) {
-        return gson.fromJson(interaction, Interaction)
+        return getSerializer().fromJson(interaction, Interaction)
+    }
+
+    Gson getSerializer() {
+        if (!serializer) {
+            ModelAwareJsonSerializerFactory factory = new ModelAwareJsonSerializerFactory()
+            serializer = factory.serializer
+        }
+        return serializer
     }
 }

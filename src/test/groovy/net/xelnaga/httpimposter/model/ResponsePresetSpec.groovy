@@ -4,17 +4,19 @@ import spock.lang.Specification
 
 class ResponsePresetSpec extends Specification {
 
-    def 'get encoded body'() {
+    def 'create instance'() {
 
         given:
-            ResponsePreset responsePreset = new ResponsePreset(body: 'bodytest64')
+            Set<HttpHeader> expectedHeaders = [Mock(HttpHeader)] as Set
+            int expectedStatus = 200
+            Body expectedRequestBody = new DefaultBody('body')
 
-        expect:
-            responsePreset.encodedBody == 'Ym9keXRlc3Q2NA=='
+        when:
+            ResponsePreset responsePreset = new ResponsePreset(body: expectedRequestBody, status: expectedStatus, headers: expectedHeaders)
 
-        and:
-            responsePreset.bodyAsByteArray == 'bodytest64'.bytes
+        then:
+            responsePreset.status == expectedStatus
+            responsePreset.headers == expectedHeaders
+            responsePreset.body == expectedRequestBody
     }
-
-
 }

@@ -1,7 +1,8 @@
 package net.xelnaga.httpimposter
 
-import net.xelnaga.httpimposter.model.HttpHeader
+import net.xelnaga.httpimposter.model.DefaultBody
 import net.xelnaga.httpimposter.model.ResponsePreset
+import net.xelnaga.httpimposter.model.DefaultHttpHeader
 import net.xelnaga.httpimposter.serializer.ReportSerializer
 import net.xelnaga.httpimposter.model.Report
 import org.springframework.mock.web.MockHttpServletResponse
@@ -29,10 +30,10 @@ class ResponseWriterSpec extends Specification {
             ResponsePreset responsePreset = new ResponsePreset(
                     status: 234,
                     headers: [
-                        new HttpHeader('Content-Type', 'text/exciting'),
-                        new HttpHeader('Lemon', 'Lime')
+                        new DefaultHttpHeader('Content-Type', 'text/exciting'),
+                        new DefaultHttpHeader('Lemon', 'Lime')
                     ],
-                    body: 'qwertyuiop'
+                    body: new DefaultBody('qwertyuiop')
             )
 
             MockHttpServletResponse httpResponse = new MockHttpServletResponse()

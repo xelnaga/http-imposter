@@ -12,13 +12,14 @@ class RequestPrinter {
         if (request.headers.size() > 0) {
             output += '\n'
             request.headers.each { HttpHeader header ->
-                output += header.name.toLowerCase() + ': ' + header.value + '\n'
+                output += header.toString() + '\n'
             }
         }
 
-        if (request.body.size() > 0) {
+        if (!request.body.isEmpty()) {
             output += '\n'
-            output += request.body + '\n'
+            output += "type: '" + request.body.type + "'\n"
+            output += request.body.value + '\n'
         }
 
         return output
